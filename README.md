@@ -13,6 +13,7 @@ pip install tmdbsimple
 ```
 pip install youtube-dl
 ```
+-[ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
 ## Settings
 Edit the **settings.ini** file. Here you can add your api key for TMDB, country code, language, resolution settings, path to your ffmpeg installation, and the path to your python installation.
