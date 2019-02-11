@@ -30,7 +30,7 @@ To download a trailer for a specific movie, use the command below. You will need
 python /path/to/download.py --title "A Star Is Born" --year "2018" --directory "/path/to/movies/A Star Is Born (2018)"
 ```
 
-This script can also be ran with an application like Tautulli to automatically download a trailer each time a new movie is added to Plex. To set this up, open Tautulli and go to Settings > Notification Agents and add a new notification agent. The type should be "script" and you'll want to add the path to the folder the scripts are located in and select download.py as your script in the configuration tab. Also add a name for the description. Next, go the triggers tab and check the box for "Recently Added" and then go to the conditions tab and add a condition to only fire when "media type is movie". For the arguments tab, go to the "Recently Added" section and add the code below. After that, be sure to save it and you're all set.
+This script can also be ran with an application like Tautulli to automatically download a trailer each time a new movie is added to Plex. To set this up, open Tautulli and go to Settings > Notification Agents and add a new notification agent. The type should be "script" and you'll want to add the path to the folder the scripts are located in and select download.py as your script in the configuration tab. Also add a name for the description. Next, go to the triggers tab and check the box for "Recently Added" and then go to the conditions tab and add a condition to only fire when "media type is movie". For the arguments tab, go to the "Recently Added" section and add the code below. After that, be sure to save it and you're all set.
 ```
 <movie>--title "{title}" --year "{year}" --file "{file}"</movie>
 ```
