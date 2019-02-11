@@ -11,7 +11,7 @@ pip install tmdbsimple
 
 -[youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md#installation)
 ```
-pip install youtube-dl
+sudo -H pip install --upgrade youtube-dl
 ```
 
 -[ffmpeg](https://github.com/FFmpeg/FFmpeg)
