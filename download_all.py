@@ -21,7 +21,7 @@ def getArguments():
 # Settings
 def getSettings():
     config = ConfigParser()
-    config.read('settings.ini')
+    config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
         'python_path': config.get('DEFAULT', 'python_path'),
     }
@@ -55,7 +55,7 @@ def main():
                     print(item)
 
                     # Download trailer for item
-                    os.system(settings['python_path']+' download.py --title "'+title+'" --year "'+year+'" --directory "'+directory+'"')
+                    os.system(settings['python_path']+' '+os.path.split(os.path.abspath(__file__))[0]+'/download.py --title "'+title+'" --year "'+year+'" --directory "'+directory+'"')
 
     else:
 

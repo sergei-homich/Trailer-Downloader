@@ -36,7 +36,7 @@ def getArguments():
 # Settings
 def getSettings():
     config = ConfigParser()
-    config.read('settings.ini')
+    config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
         'api_key': config.get('DEFAULT', 'tmdb_api_key'),
         'region': config.get('DEFAULT', 'region'),

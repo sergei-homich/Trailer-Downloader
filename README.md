@@ -39,8 +39,7 @@ This script can also be ran with an application like Tautulli to automatically d
 
 To download trailers for an entire library that already exists, use the command below. You will need to supply the directory that all of your movie folders are in. The script will iterate through all of your movie folders in the directory and it will automatically pull the title and year from the folder name. Trailers will be downloaded into the folder for each movie.
 ```
-cd /path/to/scripts
-python download_all.py --directory "/path/to/movies"
+python /path/to/download_all.py --directory "/path/to/movies"
 ```
 
 This script expects your movies to be in a very specific structure. If your movies do not match the format below, you **will not** be able to use this script.
