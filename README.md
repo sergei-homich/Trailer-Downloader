@@ -2,21 +2,20 @@
 Simple set of python scripts for downloading a movie trailer from Apple or from YouTube with help from TMDB. For quality purposes, the scripts will always attempt to download a trailer from Apple before falling back to TMDB and YouTube. This is useful if you are running a media server like Plex and you would like to have local trailers for each of your movies.
 
 ## Requirements
--Python 2.7 or higher
+-[Python 2.7+](https://www.python.org/)
 
 -[tmdbsimple](https://github.com/celiao/tmdbsimple/blob/master/README.rst) + TMDB API Key
-```
-pip install tmdbsimple
-```
 
 -[youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md#installation)
-```
-sudo -H pip install --upgrade youtube-dl
-```
 
 -[ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
 -[tautulli](https://github.com/Tautulli/Tautulli) for automated downloading
+
+## Installation
+```
+sudo -H pip install -r requirements.txt
+```
 
 ## Settings
 Edit the **settings.ini** file. Here you can add your api key for TMDB, country code, language, resolution settings, path to your ffmpeg installation, and the path to your python installation.
