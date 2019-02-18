@@ -14,7 +14,7 @@ Simple set of python scripts for downloading a movie trailer from Apple or from 
 
 ## Installation
 ```
-sudo -H pip install -r requirements.txt
+sudo -H pip install -r /path/to/scripts/requirements.txt
 ```
 
 ## Settings
