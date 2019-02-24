@@ -225,7 +225,7 @@ def main():
                 for result in search['results']:
 
                     # Filter by year
-                    if arguments['year'].lower() in result['release_date'].lower():
+                    if arguments['year'].lower() in result['release_date'].lower() and arguments['title'].lower() == result['title'].lower():
 
                         # Find trailers for movie
                         videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['api_key'])
