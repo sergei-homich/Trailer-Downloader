@@ -208,7 +208,7 @@ def main():
                 for result in search['results']:
 
                     # Filter by year and exact title
-                    if arguments['year'].lower() in result['releasedate'].lower() and removeSpecialChars(arguments['title']).lower() == removeSpecialChars(result['title']).lower():
+                    if arguments['year'].lower() in result['releasedate'].lower() and removeSpecialChars(arguments['title']).replace('-', '').lower() == removeSpecialChars(result['title']).replace('-', '').lower():
 
                         file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], arguments['title']+' ('+arguments['year']+')-trailer.mp4')
 
@@ -225,7 +225,7 @@ def main():
                 for result in search['results']:
 
                     # Filter by year
-                    if arguments['year'].lower() in result['release_date'].lower() and removeSpecialChars(arguments['title']).lower() == removeSpecialChars(result['title']).lower():
+                    if arguments['year'].lower() in result['release_date'].lower() and removeSpecialChars(arguments['title']).replace('-', '').lower() == removeSpecialChars(result['title']).replace('-', '').lower():
 
                         # Find trailers for movie
                         videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['api_key'])
