@@ -224,7 +224,7 @@ def main():
                 # Iterate over search results
                 for result in search['results']:
 
-                    # Filter by year
+                    # Filter by year and exact title
                     if arguments['year'].lower() in result['release_date'].lower() and removeSpecialChars(arguments['title']).replace('-', '').lower() == removeSpecialChars(result['title']).replace('-', '').lower():
 
                         # Find trailers for movie
