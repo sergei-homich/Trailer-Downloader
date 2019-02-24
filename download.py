@@ -207,8 +207,8 @@ def main():
                 # Iterate over search results
                 for result in search['results']:
 
-                    # Filter by year
-                    if arguments['year'].lower() in result['releasedate'].lower():
+                    # Filter by year and exact title
+                    if arguments['year'].lower() in result['releasedate'].lower() and arguments['title'].lower() == result['title'].lower():
 
                         file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], arguments['title']+' ('+arguments['year']+')-trailer.mp4')
 
