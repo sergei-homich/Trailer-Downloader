@@ -4,6 +4,7 @@ import os
 import json
 import shutil
 import socket
+import unidecode
 import tmdbsimple as tmdb
 import youtube_dl
 
@@ -50,6 +51,10 @@ def getSettings():
 # Remove special characters
 def removeSpecialChars(query):
     return "".join([ch for ch in query if ch.isalnum() or ch.isspace()])
+
+# Match titles
+def matchTitle(title):
+    return unidecode.unidecode(removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace("'", '').replace('<', '').replace('>', '').replace('|', '').replace('+', '').replace(' ', '')).lower()
 
 # Load json from url
 def loadJson(url):
@@ -208,7 +213,7 @@ def main():
                 for result in search['results']:
 
                     # Filter by year and exact title
-                    if arguments['year'].lower() in result['releasedate'].lower() and removeSpecialChars(arguments['title']).replace('-', '').lower() == removeSpecialChars(result['title']).replace('-', '').lower():
+                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
                         file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], arguments['title']+' ('+arguments['year']+')-trailer.mp4')
 
@@ -225,7 +230,7 @@ def main():
                 for result in search['results']:
 
                     # Filter by year and exact title
-                    if arguments['year'].lower() in result['release_date'].lower() and removeSpecialChars(arguments['title']).replace('-', '').lower() == removeSpecialChars(result['title']).replace('-', '').lower():
+                    if arguments['year'].lower() in result['release_date'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
                         # Find trailers for movie
                         videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['api_key'])

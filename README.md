@@ -10,6 +10,8 @@ Simple set of python scripts for downloading a movie trailer from Apple or from 
 
 -[ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
+-[unidecode](https://github.com/avian2/unidecode)
+
 -[tautulli](https://github.com/Tautulli/Tautulli) for automated downloading
 
 ## Installation
