@@ -4,7 +4,7 @@ import os
 import json
 import shutil
 import socket
-import unidecode
+import unicodedata
 import tmdbsimple as tmdb
 import youtube_dl
 
@@ -54,7 +54,7 @@ def removeSpecialChars(query):
 
 # Match titles
 def matchTitle(title):
-    return unidecode.unidecode(removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace("'", '').replace('<', '').replace('>', '').replace('|', '').replace('+', '').replace(' ', '')).lower()
+    return unicodedata.normalize('NFKD', removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace("'", '').replace('<', '').replace('>', '').replace('|', '').replace('.', '').replace('+', '').replace('&', 'and').replace(' ', '').lower()).encode('ASCII', 'ignore')
 
 # Load json from url
 def loadJson(url):
@@ -212,7 +212,7 @@ def main():
                 # Iterate over search results
                 for result in search['results']:
 
-                    # Filter by year and exact title
+                    # Filter by year and title
                     if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
                         file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], arguments['title']+' ('+arguments['year']+')-trailer.mp4')
@@ -229,7 +229,7 @@ def main():
                 # Iterate over search results
                 for result in search['results']:
 
-                    # Filter by year and exact title
+                    # Filter by year and title
                     if arguments['year'].lower() in result['release_date'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
                         # Find trailers for movie
