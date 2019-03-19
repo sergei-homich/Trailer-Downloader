@@ -44,7 +44,7 @@ def main():
             if os.path.isdir(arguments['directory']+'/'+item):
 
                 # Get variables for the download script
-                title = item[0:item.rfind('(')].rstrip()
+                title = item[0:item.rfind('(')].strip()
                 year = item[item.rindex('(')+1:].split(')')[0].strip()
                 directory = arguments['directory']+'/'+item
 
