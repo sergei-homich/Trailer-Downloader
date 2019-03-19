@@ -15,7 +15,7 @@ def getArguments():
     parser.add_argument("-d", "--directory", dest="directory", help="Directory used to find movie titles and years", metavar="DIRECTORY")
     args = parser.parse_args()
     return {
-        'directory': args.directory,
+        'directory': args.directory
     }
 
 # Settings
