@@ -23,7 +23,7 @@ def getSettings():
     config = ConfigParser()
     config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
-        'python_path': config.get('DEFAULT', 'python_path'),
+        'python_path': config.get('DEFAULT', 'python_path')
     }
 
 # Main
@@ -44,8 +44,8 @@ def main():
             if os.path.isdir(arguments['directory']+'/'+item):
 
                 # Get variables for the download script
-                title = item.split('(')[0].strip()
-                year = item.split('(')[1].split(')')[0].strip()
+                title = item[0:item.rfind('(')].rstrip()
+                year = item[item.rindex('(')+1:].split(')')[0].strip()
                 directory = arguments['directory']+'/'+item
 
                 # Make sure the trailer has not already been downloaded

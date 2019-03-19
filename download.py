@@ -179,7 +179,7 @@ def youtubeDownload(video, min_resolution, max_resolution, title, year, director
         'prefer_ffmpeg': 'TRUE',
         'ffmpeg_location': ffmpeg_path,
         'quiet': 'TRUE',
-        'ignore_warnings': 'TRUE',
+        'no_warnings': 'TRUE',
         'ignore_errors': 'TRUE',
         'no_playlist': 'TRUE',
         'outtmpl': os.path.split(os.path.abspath(__file__))[0]+'/'+filename
@@ -241,6 +241,7 @@ def main():
                     search = searchTMDB(arguments['title'], settings['api_key'])
                 except:
                     print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
+                    sys.exit()
 
                 # Iterate over search results
                 for result in search['results']:
