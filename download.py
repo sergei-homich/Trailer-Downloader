@@ -190,8 +190,8 @@ def youtubeDownload(video, min_resolution, max_resolution, title, year, director
         'prefer_ffmpeg': 'TRUE',
         'ffmpeg_location': ffmpeg_path,
         'quiet': 'TRUE',
-        # 'no_warnings': 'TRUE',
-        # 'ignore_errors': 'TRUE',
+        'no_warnings': 'TRUE',
+        'ignore_errors': 'TRUE',
         'no_playlist': 'TRUE',
         'outtmpl': os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename
     }
