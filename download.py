@@ -34,11 +34,14 @@ except:
 
 # Arguments
 def getArguments():
-    parser = ArgumentParser(description='Download a movie trailer from Apple or YouTube')
-    parser.add_argument("-d", "--directory", dest="directory", help="Full path of directory to copy downloaded trailer", metavar="DIRECTORY")
-    parser.add_argument("-f", "--file", dest="file", help="Full path of movie file", metavar="FILE")
-    parser.add_argument("-t", "--title", dest="title", help="Title of movie", metavar="TITLE")
-    parser.add_argument("-y", "--year", dest="year", help="Release year of movie", metavar="YEAR")
+    name = 'Trailer-Downloader'
+    version = '1.01'
+    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
+    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
+    parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
+    parser.add_argument("-f", "--file", dest="file", help="full path of movie file", metavar="FILE")
+    parser.add_argument("-t", "--title", dest="title", help="title of movie", metavar="TITLE")
+    parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
     return {
         'directory': args.directory,
@@ -134,13 +137,15 @@ def downloadFile(url, destdir, filename):
     except URLError as error:
         return
     try:
-        with open(os.path.split(os.path.abspath(__file__))[0]+'/'+filename, 'wb') as local_file_handle:
+        if not os.path.exists(os.path.split(os.path.abspath(__file__))[0]+'/downloads'):
+            os.makedirs(os.path.split(os.path.abspath(__file__))[0]+'/downloads')
+        with open(os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename, 'wb') as local_file_handle:
             shutil.copyfileobj(server_file_handle, local_file_handle, chunk_size)
     except socket.error as error:
         return
 
     # Move downloaded trailer to directory
-    shutil.move(os.path.split(os.path.abspath(__file__))[0]+'/'+filename, destdir+'/'+filename)
+    shutil.move(os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename, destdir+'/'+filename)
 
 # Download from Apple
 def appleDownload(page_url, res, destdir, filename):
@@ -171,6 +176,12 @@ def videosTMDB(id, lang, region, api_key):
 
 # Download file from YouTube
 def youtubeDownload(video, min_resolution, max_resolution, title, year, directory, ffmpeg_path):
+    # Make sure ffmpeg path exists
+    if not os.path.exists(ffmpeg_path):
+        print('\033[91mERROR:\033[0m The specified path to ffmpeg does not exist. Check your settings.')
+        sys.exit()
+
+    # YouTube options
     filename = title+' ('+year+')-trailer.mp4'
     options = {
         'format': 'bestvideo[ext=mp4][height<='+max_resolution+']+bestaudio[ext=m4a]',
@@ -179,20 +190,22 @@ def youtubeDownload(video, min_resolution, max_resolution, title, year, director
         'prefer_ffmpeg': 'TRUE',
         'ffmpeg_location': ffmpeg_path,
         'quiet': 'TRUE',
-        'no_warnings': 'TRUE',
-        'ignore_errors': 'TRUE',
+        # 'no_warnings': 'TRUE',
+        # 'ignore_errors': 'TRUE',
         'no_playlist': 'TRUE',
-        'outtmpl': os.path.split(os.path.abspath(__file__))[0]+'/'+filename
+        'outtmpl': os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename
     }
 
     try:
         # Download
+        if not os.path.exists(os.path.split(os.path.abspath(__file__))[0]+'/downloads'):
+            os.makedirs(os.path.split(os.path.abspath(__file__))[0]+'/downloads')
         with youtube_dl.YoutubeDL(options) as youtube:
             file = youtube.extract_info(video, download=True)
         # Move downloaded trailer to directory
         if not os.path.exists(directory):
             os.makedirs(directory)
-        shutil.move(os.path.split(os.path.abspath(__file__))[0]+'/'+filename, directory+'/'+filename)
+        shutil.move(os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename, directory+'/'+filename)
         return file
     except:
         return False
