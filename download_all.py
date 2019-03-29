@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import os
+import sys
 
 # Python 3.0 and later
 try:
@@ -11,11 +12,14 @@ except ImportError:
 
 # Arguments
 def getArguments():
-    parser = ArgumentParser(description='Download a movie trailer from Apple or YouTube for all folders in a directory')
-    parser.add_argument("-d", "--directory", dest="directory", help="Directory used to find movie titles and years", metavar="DIRECTORY")
+    name = 'Trailer-Downloader'
+    version = '1.01'
+    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(name))
+    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
+    parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
     args = parser.parse_args()
     return {
-        'directory': args.directory,
+        'directory': args.directory
     }
 
 # Settings
@@ -23,7 +27,7 @@ def getSettings():
     config = ConfigParser()
     config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
-        'python_path': config.get('DEFAULT', 'python_path'),
+        'python_path': config.get('DEFAULT', 'python_path')
     }
 
 # Main
@@ -37,6 +41,16 @@ def main():
     # Make sure a directory was passed
     if arguments['directory'] != None:
 
+        # Make sure directory exists
+        if not os.path.exists(arguments['directory']):
+            print('\033[91mERROR:\033[0m The specified directory does not exist. Check your arguments.')
+            sys.exit()
+
+        # Make sure python path exists
+        if not os.path.exists(settings['python_path']):
+            print('\033[91mERROR:\033[0m The specified path to python does not exist. Check your settings.')
+            sys.exit()
+
         # Iterate through items in directory
         for item in os.listdir(arguments['directory']):
 
@@ -44,9 +58,14 @@ def main():
             if os.path.isdir(arguments['directory']+'/'+item):
 
                 # Get variables for the download script
-                title = item.split('(')[0].strip()
-                year = item.split('(')[1].split(')')[0].strip()
-                directory = arguments['directory']+'/'+item
+                try:
+                    title = item[0:item.rfind('(')].strip()
+                    year = item[item.rindex('(')+1:].split(')')[0].strip()
+                    directory = arguments['directory']+'/'+item
+                except:
+                    print(item)
+                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
+                    continue
 
                 # Make sure the trailer has not already been downloaded
                 if not os.path.exists(directory+'/'+title+' ('+year+')-trailer.mp4'):
