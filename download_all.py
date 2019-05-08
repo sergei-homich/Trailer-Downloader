@@ -13,7 +13,7 @@ except ImportError:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.01'
+    version = '1.03'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
@@ -27,7 +27,8 @@ def getSettings():
     config = ConfigParser()
     config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
-        'python_path': config.get('DEFAULT', 'python_path')
+        'python_path': config.get('DEFAULT', 'python_path'),
+        'subfolder': config.get('DEFAULT', 'subfolder')
     }
 
 # Main
@@ -67,8 +68,14 @@ def main():
                     print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
                     continue
 
+                # If subfolder setting is set, add it to the destination directory.
+                if settings['subfolder'] is not None:
+                    destination = directory+'/'+settings['subfolder']
+                else:
+                    destination = directory
+
                 # Make sure the trailer has not already been downloaded
-                if not os.path.exists(directory+'/'+title+' ('+year+')-trailer.mp4'):
+                if not os.path.exists(destination+'/'+title+' ('+year+')-trailer.mp4'):
 
                     # Print current item
                     print(item)
