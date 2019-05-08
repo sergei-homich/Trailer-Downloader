@@ -35,7 +35,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.01'
+    version = '1.03'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
@@ -61,7 +61,8 @@ def getSettings():
         'resolution': config.get('DEFAULT', 'resolution'),
         'max_resolution': config.get('DEFAULT', 'max_resolution'),
         'min_resolution': config.get('DEFAULT', 'min_resolution'),
-        'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path')
+        'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path'),
+        'subfolder': config.get('DEFAULT', 'subfolder')
     }
 
 # Remove special characters
@@ -124,7 +125,7 @@ def convertUrl(src_url, res):
     return src_url.replace(src_ending, file_ending)
 
 # Download the file
-def downloadFile(url, destdir, filename):
+def downloadFile(url, directory, filename):
     data = None
     headers = {'User-Agent': 'Quick_time/7.6.2'}
     req = Request(url, data, headers)
@@ -145,13 +146,15 @@ def downloadFile(url, destdir, filename):
         return
 
     # Move downloaded trailer to directory
-    shutil.move(os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename, destdir+'/'+filename)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    shutil.move(os.path.split(os.path.abspath(__file__))[0]+'/downloads/'+filename, directory+'/'+filename)
 
 # Download from Apple
-def appleDownload(page_url, res, destdir, filename):
+def appleDownload(page_url, res, directory, filename):
     trailer_urls = getUrls(page_url, res)
     for trailer_url in trailer_urls:
-        downloadFile(trailer_url['url'], destdir, filename)
+        downloadFile(trailer_url['url'], directory, filename)
         return filename
 
 # Search Apple
@@ -224,6 +227,10 @@ def main():
         # If directory argument is not set, get directory from file
         if arguments['directory'] == None and arguments['file'] != None:
             arguments['directory'] = os.path.abspath(os.path.dirname(arguments['file']))
+
+        # If subfolder setting is set, add it to the directory.
+        if settings['subfolder'] is not None:
+            arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
         # Make sure trailer file doesn't already exist in the directory
         if not os.path.exists(arguments['directory']+'/'+arguments['title']+' ('+arguments['year']+')-trailer.mp4'):
