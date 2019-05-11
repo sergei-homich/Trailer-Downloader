@@ -234,9 +234,9 @@ def main():
 
         # If append_filenames setting is set, add -trailer to the filename.
         if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
-            filename = arguments['title']+' ('+arguments['year']+')-trailer.mp4'
+            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
         else:
-            filename = arguments['title']+' ('+arguments['year']+').mp4'
+            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+').mp4'
 
         # Make sure trailer file doesn't already exist in the directory
         if not os.path.exists(arguments['directory']+'/'+filename):
