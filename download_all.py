@@ -13,7 +13,7 @@ except ImportError:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.03'
+    version = '1.04'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
@@ -28,6 +28,7 @@ def getSettings():
     config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
         'python_path': config.get('DEFAULT', 'python_path'),
+        'append_filenames': config.get('DEFAULT', 'append_filenames'),
         'subfolder': config.get('DEFAULT', 'subfolder')
     }
 
@@ -74,8 +75,14 @@ def main():
                 else:
                     destination = directory
 
+                # If append_filenames setting is set, add -trailer to the filename.
+                if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
+                    filename = title+' ('+year+')-trailer.mp4'
+                else:
+                    filename = title+' ('+year+').mp4'
+
                 # Make sure the trailer has not already been downloaded
-                if not os.path.exists(destination+'/'+title+' ('+year+')-trailer.mp4'):
+                if not os.path.exists(destination+'/'+filename):
 
                     # Print current item
                     print(item)

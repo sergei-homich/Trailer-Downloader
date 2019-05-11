@@ -35,7 +35,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.03'
+    version = '1.04'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
@@ -62,6 +62,7 @@ def getSettings():
         'max_resolution': config.get('DEFAULT', 'max_resolution'),
         'min_resolution': config.get('DEFAULT', 'min_resolution'),
         'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path'),
+        'append_filenames': config.get('DEFAULT', 'append_filenames'),
         'subfolder': config.get('DEFAULT', 'subfolder')
     }
 
@@ -178,14 +179,13 @@ def videosTMDB(id, lang, region, api_key):
     return movie.videos(language=lang+'-'+region)
 
 # Download file from YouTube
-def youtubeDownload(video, min_resolution, max_resolution, title, year, directory, ffmpeg_path):
+def youtubeDownload(video, min_resolution, max_resolution, directory, filename, ffmpeg_path):
     # Make sure ffmpeg path exists
     if not os.path.exists(ffmpeg_path):
         print('\033[91mERROR:\033[0m The specified path to ffmpeg does not exist. Check your settings.')
         sys.exit()
 
     # YouTube options
-    filename = title+' ('+year+')-trailer.mp4'
     options = {
         'format': 'bestvideo[ext=mp4][height<='+max_resolution+']+bestaudio[ext=m4a]',
         'default_search': 'ytsearch1:',
@@ -232,8 +232,14 @@ def main():
         if settings['subfolder'] is not None:
             arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
+        # If append_filenames setting is set, add -trailer to the filename.
+        if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
+            filename = arguments['title']+' ('+arguments['year']+')-trailer.mp4'
+        else:
+            filename = arguments['title']+' ('+arguments['year']+').mp4'
+
         # Make sure trailer file doesn't already exist in the directory
-        if not os.path.exists(arguments['directory']+'/'+arguments['title']+' ('+arguments['year']+')-trailer.mp4'):
+        if not os.path.exists(arguments['directory']+'/'+filename):
 
             # Download status
             downloaded = False
@@ -248,7 +254,7 @@ def main():
                     # Filter by year and title
                     if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
-                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], arguments['title']+' ('+arguments['year']+')-trailer.mp4')
+                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
                         # Update downloaded status
                         if file:
@@ -277,7 +283,7 @@ def main():
                                 video = 'https://www.youtube.com/watch?v='+item['key']
 
                                 # Download trailer from YouTube
-                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['title'], arguments['year'], arguments['directory'], settings['ffmpeg_path'])
+                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename, settings['ffmpeg_path'])
 
                                 # Update downloaded status
                                 if file:
