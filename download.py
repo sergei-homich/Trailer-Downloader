@@ -35,7 +35,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.04'
+    version = '1.05'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
@@ -234,9 +234,9 @@ def main():
 
         # If append_filenames setting is set, add -trailer to the filename.
         if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
-            filename = arguments['title']+' ('+arguments['year']+')-trailer.mp4'
+            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
         else:
-            filename = arguments['title']+' ('+arguments['year']+').mp4'
+            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+').mp4'
 
         # Make sure trailer file doesn't already exist in the directory
         if not os.path.exists(arguments['directory']+'/'+filename):
