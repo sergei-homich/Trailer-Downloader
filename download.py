@@ -61,9 +61,9 @@ def getSettings():
         'resolution': config.get('DEFAULT', 'resolution'),
         'max_resolution': config.get('DEFAULT', 'max_resolution'),
         'min_resolution': config.get('DEFAULT', 'min_resolution'),
-        'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path'),
-        'append_filenames': config.get('DEFAULT', 'append_filenames'),
-        'subfolder': config.get('DEFAULT', 'subfolder')
+        'subfolder': config.get('DEFAULT', 'subfolder'),
+        'custom_formatting': config.get('DEFAULT', 'custom_formatting'),
+        'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path')
     }
 
 # Remove special characters
@@ -232,11 +232,11 @@ def main():
         if settings['subfolder'] is not None:
             arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
-        # If append_filenames setting is set, add -trailer to the filename.
-        if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
-            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
+        # Use custom formatting for filenames or use default if none is set
+        if settings['custom_formatting'].strip():
+            filename = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
         else:
-            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+').mp4'
+            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
 
         # Make sure trailer file doesn't already exist in the directory
         if not os.path.exists(arguments['directory']+'/'+filename):

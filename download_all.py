@@ -27,9 +27,9 @@ def getSettings():
     config = ConfigParser()
     config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
-        'python_path': config.get('DEFAULT', 'python_path'),
-        'append_filenames': config.get('DEFAULT', 'append_filenames'),
-        'subfolder': config.get('DEFAULT', 'subfolder')
+        'subfolder': config.get('DEFAULT', 'subfolder'),
+        'custom_formatting': config.get('DEFAULT', 'custom_formatting'),
+        'python_path': config.get('DEFAULT', 'python_path')
     }
 
 # Main
@@ -71,17 +71,17 @@ def main():
                     print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
                     continue
 
-                # If subfolder setting is set, add it to the destination directory.
+                # If subfolder setting is set, add it to the destination directory
                 if settings['subfolder'].strip():
                     destination = directory+'/'+settings['subfolder']
                 else:
                     destination = directory
 
-                # If append_filenames setting is set, add -trailer to the filename.
-                if settings['append_filenames'].strip() and settings['append_filenames'].lower() == 'true':
-                    filename = title+' ('+year+')-trailer.mp4'
+                # Use custom formatting for filenames or use default if none is set
+                if settings['custom_formatting'].strip():
+                    filename = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
                 else:
-                    filename = title+' ('+year+').mp4'
+                    filename = title+' ('+year+')-trailer.mp4'
 
                 # Make sure the trailer has not already been downloaded
                 if not os.path.exists(destination+'/'+filename):
