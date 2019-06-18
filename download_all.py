@@ -41,17 +41,19 @@ def main():
     settings = getSettings()
 
     # Make sure a directory was passed
-    if arguments['directory'] != None:
+    if arguments['directory'] is not None:
 
         # Make sure directory exists
         if not os.path.exists(arguments['directory']):
             print('\033[91mERROR:\033[0m The specified directory does not exist. Check your arguments.')
             sys.exit()
 
-        # Make sure python path exists
-        if not os.path.exists(settings['python_path']):
+        # Make sure specified python path exists or attempt to use default if none is set
+        if settings['python_path'].strip() and not os.path.exists(settings['python_path']):
             print('\033[91mERROR:\033[0m The specified path to python does not exist. Check your settings.')
             sys.exit()
+        else:
+            settings['python_path'] = 'python'
 
         # Iterate through items in directory
         for item in os.listdir(arguments['directory']):
@@ -70,13 +72,13 @@ def main():
                     continue
 
                 # If subfolder setting is set, add it to the destination directory.
-                if settings['subfolder'] is not None:
+                if settings['subfolder'].strip():
                     destination = directory+'/'+settings['subfolder']
                 else:
                     destination = directory
 
                 # If append_filenames setting is set, add -trailer to the filename.
-                if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
+                if settings['append_filenames'].strip() and settings['append_filenames'].lower() == 'true':
                     filename = title+' ('+year+')-trailer.mp4'
                 else:
                     filename = title+' ('+year+').mp4'
