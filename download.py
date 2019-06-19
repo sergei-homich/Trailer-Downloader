@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from argparse import ArgumentParser
-import os
 import json
+import os
 import shutil
 import socket
 import sys
@@ -228,8 +228,8 @@ def main():
         if arguments['directory'] == None and arguments['file'] != None:
             arguments['directory'] = os.path.abspath(os.path.dirname(arguments['file']))
 
-        # If subfolder setting is set, add it to the directory.
-        if settings['subfolder'] is not None:
+        # If subfolder setting is set, add it to the directory
+        if settings['subfolder'].strip():
             arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
         # Use custom formatting for filenames or use default if none is set
@@ -238,28 +238,30 @@ def main():
         else:
             filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
 
+        # Download status
+        downloaded = False
+
         # Make sure trailer file doesn't already exist in the directory
-        if not os.path.exists(arguments['directory']+'/'+filename):
+        for name in os.listdir(arguments['directory']):
+            if filename[:-4] in name:
+                downloaded = True
 
-            # Download status
-            downloaded = False
+        # Search Apple for trailer
+        if not downloaded:
+            search = searchApple(arguments['title'])
 
-            # Search Apple for trailer
-            if not downloaded:
-                search = searchApple(arguments['title'])
+            # Iterate over search results
+            for result in search['results']:
 
-                # Iterate over search results
-                for result in search['results']:
+                # Filter by year and title
+                if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
-                    # Filter by year and title
-                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
+                    file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
-                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
-
-                        # Update downloaded status
-                        if file:
-                            downloaded = True
-                            break
+                    # Update downloaded status
+                    if file:
+                        downloaded = True
+                        break
 
             # Search YouTube for trailer
             if not downloaded:
