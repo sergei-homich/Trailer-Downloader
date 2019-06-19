@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 from argparse import ArgumentParser
+from HTMLParser import HTMLParser
+from unidecode import unidecode
 import json
 import os
 import shutil
@@ -44,10 +46,10 @@ def getArguments():
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
     return {
-        'directory': args.directory,
-        'file': args.file,
-        'title': args.title,
-        'year': args.year
+        'directory': str(args.directory).decode(format()),
+        'file': str(args.file).decode(format()),
+        'title': str(args.title).decode(format()),
+        'year': str(args.year).decode(format())
     }
 
 # Settings
@@ -65,9 +67,21 @@ def getSettings():
         'custom_formatting': config.get('DEFAULT', 'custom_formatting')
     }
 
+# Format
+def format():
+    return 'windows-1252' if os.name == 'nt' else 'utf-8'
+
 # Remove special characters
 def removeSpecialChars(query):
     return "".join([ch for ch in query if ch.isalnum() or ch.isspace()])
+
+# Remove accent characters
+def removeAccents(query):
+    return unidecode(query)
+
+# Unescape characters
+def unescape(query):
+    return HTMLParser().unescape(query)
 
 # Match titles
 def matchTitle(title):
@@ -160,6 +174,7 @@ def appleDownload(page_url, res, directory, filename):
 # Search Apple
 def searchApple(query):
     query = removeSpecialChars(query)
+    query = removeAccents(query)
     query = query.replace(' ', '+')
     search_url = 'https://trailers.apple.com/trailers/home/scripts/quickfind.php?q='+query
     return loadJson(search_url)
@@ -247,7 +262,7 @@ def main():
             for result in search['results']:
 
                 # Filter by year and title
-                if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
+                if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
 
                     file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
