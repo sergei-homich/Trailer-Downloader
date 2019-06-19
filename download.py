@@ -62,8 +62,7 @@ def getSettings():
         'max_resolution': config.get('DEFAULT', 'max_resolution'),
         'min_resolution': config.get('DEFAULT', 'min_resolution'),
         'subfolder': config.get('DEFAULT', 'subfolder'),
-        'custom_formatting': config.get('DEFAULT', 'custom_formatting'),
-        'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path')
+        'custom_formatting': config.get('DEFAULT', 'custom_formatting')
     }
 
 # Remove special characters
@@ -179,19 +178,13 @@ def videosTMDB(id, lang, region, api_key):
     return movie.videos(language=lang+'-'+region)
 
 # Download file from YouTube
-def youtubeDownload(video, min_resolution, max_resolution, directory, filename, ffmpeg_path):
-    # Make sure ffmpeg path exists
-    if not os.path.exists(ffmpeg_path):
-        print('\033[91mERROR:\033[0m The specified path to ffmpeg does not exist. Check your settings.')
-        sys.exit()
-
+def youtubeDownload(video, min_resolution, max_resolution, directory, filename):
     # YouTube options
     options = {
         'format': 'bestvideo[ext=mp4][height<='+max_resolution+']+bestaudio[ext=m4a]',
         'default_search': 'ytsearch1:',
         'restrict_filenames': 'TRUE',
         'prefer_ffmpeg': 'TRUE',
-        'ffmpeg_location': ffmpeg_path,
         'quiet': 'TRUE',
         'no_warnings': 'TRUE',
         'ignore_errors': 'TRUE',
@@ -285,7 +278,7 @@ def main():
                                 video = 'https://www.youtube.com/watch?v='+item['key']
 
                                 # Download trailer from YouTube
-                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename, settings['ffmpeg_path'])
+                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
 
                                 # Update downloaded status
                                 if file:
