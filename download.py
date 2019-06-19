@@ -1,7 +1,9 @@
 from __future__ import unicode_literals
 from argparse import ArgumentParser
-import os
+from HTMLParser import HTMLParser
+from unidecode import unidecode
 import json
+import os
 import shutil
 import socket
 import sys
@@ -35,7 +37,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.05'
+    version = '1.06'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
@@ -44,10 +46,10 @@ def getArguments():
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
     return {
-        'directory': args.directory,
-        'file': args.file,
-        'title': args.title,
-        'year': args.year
+        'directory': str(args.directory).decode(format()),
+        'file': str(args.file).decode(format()),
+        'title': str(args.title).decode(format()),
+        'year': str(args.year).decode(format())
     }
 
 # Settings
@@ -61,14 +63,25 @@ def getSettings():
         'resolution': config.get('DEFAULT', 'resolution'),
         'max_resolution': config.get('DEFAULT', 'max_resolution'),
         'min_resolution': config.get('DEFAULT', 'min_resolution'),
-        'ffmpeg_path': config.get('DEFAULT', 'ffmpeg_path'),
-        'append_filenames': config.get('DEFAULT', 'append_filenames'),
-        'subfolder': config.get('DEFAULT', 'subfolder')
+        'subfolder': config.get('DEFAULT', 'subfolder'),
+        'custom_formatting': config.get('DEFAULT', 'custom_formatting')
     }
+
+# Format
+def format():
+    return 'windows-1252' if os.name == 'nt' else 'utf-8'
 
 # Remove special characters
 def removeSpecialChars(query):
     return "".join([ch for ch in query if ch.isalnum() or ch.isspace()])
+
+# Remove accent characters
+def removeAccents(query):
+    return unidecode(query)
+
+# Unescape characters
+def unescape(query):
+    return HTMLParser().unescape(query)
 
 # Match titles
 def matchTitle(title):
@@ -161,6 +174,7 @@ def appleDownload(page_url, res, directory, filename):
 # Search Apple
 def searchApple(query):
     query = removeSpecialChars(query)
+    query = removeAccents(query)
     query = query.replace(' ', '+')
     search_url = 'https://trailers.apple.com/trailers/home/scripts/quickfind.php?q='+query
     return loadJson(search_url)
@@ -179,19 +193,13 @@ def videosTMDB(id, lang, region, api_key):
     return movie.videos(language=lang+'-'+region)
 
 # Download file from YouTube
-def youtubeDownload(video, min_resolution, max_resolution, directory, filename, ffmpeg_path):
-    # Make sure ffmpeg path exists
-    if not os.path.exists(ffmpeg_path):
-        print('\033[91mERROR:\033[0m The specified path to ffmpeg does not exist. Check your settings.')
-        sys.exit()
-
+def youtubeDownload(video, min_resolution, max_resolution, directory, filename):
     # YouTube options
     options = {
         'format': 'bestvideo[ext=mp4][height<='+max_resolution+']+bestaudio[ext=m4a]',
         'default_search': 'ytsearch1:',
         'restrict_filenames': 'TRUE',
         'prefer_ffmpeg': 'TRUE',
-        'ffmpeg_location': ffmpeg_path,
         'quiet': 'TRUE',
         'no_warnings': 'TRUE',
         'ignore_errors': 'TRUE',
@@ -228,38 +236,40 @@ def main():
         if arguments['directory'] == None and arguments['file'] != None:
             arguments['directory'] = os.path.abspath(os.path.dirname(arguments['file']))
 
-        # If subfolder setting is set, add it to the directory.
-        if settings['subfolder'] is not None:
+        # If subfolder setting is set, add it to the directory
+        if settings['subfolder'].strip():
             arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
-        # If append_filenames setting is set, add -trailer to the filename.
-        if settings['append_filenames'] is not None and settings['append_filenames'].lower() == 'true':
-            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
+        # Use custom formatting for filenames or use default if none is set
+        if settings['custom_formatting'].strip():
+            filename = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
         else:
-            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+').mp4'
+            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
+
+        # Download status
+        downloaded = False
 
         # Make sure trailer file doesn't already exist in the directory
-        if not os.path.exists(arguments['directory']+'/'+filename):
+        for name in os.listdir(arguments['directory']):
+            if filename[:-4] in name:
+                downloaded = True
 
-            # Download status
-            downloaded = False
+        # Search Apple for trailer
+        if not downloaded:
+            search = searchApple(arguments['title'])
 
-            # Search Apple for trailer
-            if not downloaded:
-                search = searchApple(arguments['title'])
+            # Iterate over search results
+            for result in search['results']:
 
-                # Iterate over search results
-                for result in search['results']:
+                # Filter by year and title
+                if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
 
-                    # Filter by year and title
-                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
+                    file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
-                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
-
-                        # Update downloaded status
-                        if file:
-                            downloaded = True
-                            break
+                    # Update downloaded status
+                    if file:
+                        downloaded = True
+                        break
 
             # Search YouTube for trailer
             if not downloaded:
@@ -283,7 +293,7 @@ def main():
                                 video = 'https://www.youtube.com/watch?v='+item['key']
 
                                 # Download trailer from YouTube
-                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename, settings['ffmpeg_path'])
+                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
 
                                 # Update downloaded status
                                 if file:

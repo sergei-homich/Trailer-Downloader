@@ -8,6 +8,8 @@ Simple set of python scripts for downloading a movie trailer from Apple or from 
 
 -[youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md#installation)
 
+-[unidecode](https://github.com/avian2/unidecode)
+
 -[ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
 -[tautulli](https://github.com/Tautulli/Tautulli) for automated downloading
