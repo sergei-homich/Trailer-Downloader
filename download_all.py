@@ -1,35 +1,17 @@
-from argparse import ArgumentParser
-import os
 import sys
-
-# Python 3.0 and later
-try:
-    from configparser import *
-
-# Python 2.7
-except ImportError:
-    from ConfigParser import *
+sys.dont_write_bytecode = True
+from argparse import ArgumentParser
+from os import listdir, path, system
+import lib
 
 # Arguments
 def getArguments():
-    name = 'Trailer-Downloader'
-    version = '1.05'
-    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(name))
-    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
+    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(lib.helpers.info()['name']))
+    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(lib.helpers.info()['name'], lib.helpers.info()['version']), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
     args = parser.parse_args()
     return {
-        'directory': args.directory
-    }
-
-# Settings
-def getSettings():
-    config = ConfigParser()
-    config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
-    return {
-        'subfolder': config.get('DEFAULT', 'subfolder'),
-        'custom_formatting': config.get('DEFAULT', 'custom_formatting'),
-        'python_path': config.get('DEFAULT', 'python_path')
+        'directory': str(args.directory).decode(lib.helpers.format())
     }
 
 # Main
@@ -38,59 +20,105 @@ def main():
     arguments = getArguments()
 
     # Settings
-    settings = getSettings()
+    settings = lib.helpers.getSettings()
 
     # Make sure a directory was passed
     if arguments['directory'] is not None:
 
-        # Make sure directory exists
-        if not os.path.exists(arguments['directory']):
+        folder = arguments['directory']
+
+        # Make sure folder exists
+        if not path.exists(folder):
             print('\033[91mERROR:\033[0m The specified directory does not exist. Check your arguments.')
             sys.exit()
 
-        # Make sure specified python path exists or attempt to use default if none is set
-        if settings['python_path'].strip() and not os.path.exists(settings['python_path']):
-            print('\033[91mERROR:\033[0m The specified path to python does not exist. Check your settings.')
-            sys.exit()
-        else:
-            settings['python_path'] = 'python'
-
-        # Iterate through items in directory
-        for item in os.listdir(arguments['directory']):
+        # Iterate through items in folder
+        for item in listdir(folder):
 
             # Make sure the item is a directory
-            if os.path.isdir(arguments['directory']+'/'+item):
+            if path.isdir(folder+'/'+item):
 
                 # Get variables for the download script
                 try:
-                    title = item[0:item.rfind('(')].strip()
-                    year = item[item.rindex('(')+1:].split(')')[0].strip()
-                    directory = arguments['directory']+'/'+item
+                    arguments['title'] = item[0:item.rfind('(')].strip()
+                    arguments['year'] = item[item.rindex('(')+1:].split(')')[0].strip()
+                    arguments['directory'] = folder+'/'+item
                 except:
                     print(item)
                     print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
                     continue
 
-                # If subfolder setting is set, add it to the destination directory
+                # If subfolder setting is set, add it to the directory
                 if settings['subfolder'].strip():
-                    destination = directory+'/'+settings['subfolder']
-                else:
-                    destination = directory
+                    arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
-                # Use custom formatting for filenames or use default if none is set
-                if settings['custom_formatting'].strip():
-                    filename = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
-                else:
-                    filename = title+' ('+year+')-trailer.mp4'
+                # Get formatted filename
+                filename = lib.helpers.getFilename(arguments['title'], arguments['year'], settings['custom_formatting'])
 
                 # Make sure the trailer has not already been downloaded
-                if not os.path.exists(destination+'/'+filename):
+                if not path.exists(arguments['directory']+'/'+filename):
 
-                    # Print current item
                     print(item)
 
-                    # Download trailer for item
-                    os.system(settings['python_path']+' '+os.path.split(os.path.abspath(__file__))[0]+'/download.py --title "'+title+'" --year "'+year+'" --directory "'+directory+'"')
+                    # Download status
+                    downloaded = False
+
+                    # Make sure trailer file doesn't already exist in the directory
+                    for name in listdir(arguments['directory']):
+                        if filename[:-4] in name:
+                            downloaded = True
+
+                    # Search Apple for trailer
+                    if not downloaded:
+                        search = lib.apple.search(arguments['title'])
+
+                        # Iterate over search results
+                        for result in search['results']:
+
+                            # Filter by year and title
+                            if arguments['year'].lower() in result['releasedate'].lower() and lib.helpers.matchTitle(arguments['title']) == lib.helpers.matchTitle(lib.helpers.unescape(result['title'])):
+
+                                file = lib.apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
+
+                                # Update downloaded status
+                                if file:
+                                    downloaded = True
+                                    break
+
+                        # Search YouTube for trailer
+                        if not downloaded:
+                            try:
+                                search = lib.tmdb.search(arguments['title'], settings['api_key'])
+                            except:
+                                print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
+                                sys.exit()
+
+                            # Iterate over search results
+                            for result in search['results']:
+
+                                # Filter by year and title
+                                if arguments['year'].lower() in result['release_date'].lower() and lib.helpers.matchTitle(arguments['title']) == lib.helpers.matchTitle(result['title']):
+
+                                    # Find trailers for movie
+                                    videos = lib.tmdb.videos(result['id'], settings['lang'], settings['region'], settings['api_key'])
+
+                                    for item in videos['results']:
+                                        if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
+                                            video = 'https://www.youtube.com/watch?v='+item['key']
+
+                                            # Download trailer from YouTube
+                                            file = lib.tmdb.download(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
+
+                                            # Update downloaded status
+                                            if file:
+                                                downloaded = True
+                                                break
+
+                                    break
+
+                    else:
+
+                        print('\033[91mERROR:\033[0m the trailer already exists in the selected directory')
 
     else:
 
