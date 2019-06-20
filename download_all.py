@@ -13,7 +13,7 @@ except ImportError:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.07'
+    version = '1.08'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
