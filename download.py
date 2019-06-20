@@ -43,7 +43,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.06'
+    version = '1.07'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
