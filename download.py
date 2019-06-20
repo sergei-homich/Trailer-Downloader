@@ -52,10 +52,10 @@ def getArguments():
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
     return {
-        'directory': str(args.directory).decode(format()),
-        'file': str(args.file).decode(format()),
-        'title': str(args.title).decode(format()),
-        'year': str(args.year).decode(format())
+        'directory': str(args.directory).decode(format()) if args.directory != None else args.directory,
+        'file': str(args.file).decode(format()) if args.file != None else args.file,
+        'title': str(args.title).decode(format()) if args.title != None else args.title,
+        'year': str(args.year).decode(format()) if args.year != None else args.year
     }
 
 # Settings
