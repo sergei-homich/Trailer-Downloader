@@ -256,9 +256,10 @@ def main():
         downloaded = False
 
         # Make sure trailer file doesn't already exist in the directory
-        for name in os.listdir(arguments['directory']):
-            if filename[:-4] in name:
-                downloaded = True
+        if os.path.exists(arguments['directory']):
+            for name in os.listdir(arguments['directory']):
+                if filename[:-4] in name:
+                    downloaded = True
 
         # Search Apple for trailer
         if not downloaded:
