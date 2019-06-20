@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 from argparse import ArgumentParser
-from HTMLParser import HTMLParser
 import json
 import os
 import shutil
@@ -13,11 +12,13 @@ try:
     from configparser import *
     from urllib.request import *
     from urllib.error import *
+    import html.parser
 
 # Python 2.7
 except ImportError:
     from ConfigParser import *
     from urllib2 import *
+    import HTMLParser
 
 # tmdbsimple
 try:
@@ -43,7 +44,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.07'
+    version = '1.08'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
@@ -51,12 +52,22 @@ def getArguments():
     parser.add_argument("-t", "--title", dest="title", help="title of movie", metavar="TITLE")
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
-    return {
-        'directory': str(args.directory).decode(format()) if args.directory != None else args.directory,
-        'file': str(args.file).decode(format()) if args.file != None else args.file,
-        'title': str(args.title).decode(format()) if args.title != None else args.title,
-        'year': str(args.year).decode(format()) if args.year != None else args.year
-    }
+    # Python 2.7
+    try:
+        return {
+            'directory': str(args.directory).decode(format()) if args.directory != None else args.directory,
+            'file': str(args.file).decode(format()) if args.file != None else args.file,
+            'title': str(args.title).decode(format()) if args.title != None else args.title,
+            'year': str(args.year).decode(format()) if args.year != None else args.year
+        }
+    # Python 3.0 and later
+    except:
+        return {
+            'directory': str(args.directory) if args.directory != None else args.directory,
+            'file': str(args.file) if args.file != None else args.file,
+            'title': str(args.title) if args.title != None else args.title,
+            'year': str(args.year) if args.year != None else args.year
+        }
 
 # Settings
 def getSettings():
@@ -87,7 +98,12 @@ def removeAccents(query):
 
 # Unescape characters
 def unescape(query):
-    return HTMLParser().unescape(query)
+    # Python 3.0 and later
+    try:
+        return html.unescape(query)
+    # Python 2.7
+    except:
+        return HTMLParser.HTMLParser().unescape(query)
 
 # Match titles
 def matchTitle(title):
