@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 from argparse import ArgumentParser
 from HTMLParser import HTMLParser
-from unidecode import unidecode
 import json
 import os
 import shutil
@@ -32,6 +31,13 @@ try:
     import youtube_dl
 except:
     print('\033[91mERROR:\033[0m youtube_dl is not installed.')
+    sys.exit()
+
+# unidecode
+try:
+    from unidecode import unidecode
+except:
+    print('\033[91mERROR:\033[0m unidecode is not installed.')
     sys.exit()
 
 # Arguments
