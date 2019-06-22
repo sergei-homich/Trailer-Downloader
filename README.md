@@ -8,6 +8,8 @@ Simple set of python scripts for downloading a movie trailer from Apple or from 
 
 -[youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md#installation)
 
+-[unidecode](https://github.com/avian2/unidecode)
+
 -[ffmpeg](https://github.com/FFmpeg/FFmpeg)
 
 -[tautulli](https://github.com/Tautulli/Tautulli) for automated downloading
@@ -18,7 +20,7 @@ sudo -H pip install -r /path/to/scripts/requirements.txt
 ```
 
 ## Settings
-Edit the **settings.ini** file. Here you can add your api key for TMDB, country code, language, resolution settings, path to your ffmpeg installation, and the path to your python installation.
+Edit the **settings.ini** file. Here you can add your api key for TMDB, country code, language, resolution settings, subfolder, and custom formatting.
 
 ## Usage
 

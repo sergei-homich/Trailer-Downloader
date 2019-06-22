@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from HTMLParser import HTMLParser
 from os import name
 from unicodedata import normalize
 from unidecode import unidecode
@@ -7,13 +6,19 @@ from unidecode import unidecode
 # Python 3.0 and later
 try:
     from configparser import ConfigParser
-    from urllib.request import *
-    from urllib.error import *
+    import html.parser
 
 # Python 2.7
 except ImportError:
     from ConfigParser import ConfigParser
-    from urllib2 import *
+    import HTMLParser
+
+# unidecode
+try:
+    from unidecode import unidecode
+except:
+    print('\033[91mERROR:\033[0m unidecode is not installed.')
+    sys.exit()
 
 # Info
 def info():
@@ -21,10 +26,6 @@ def info():
         'name': 'Trailer-Downloader',
         'version': '1.05'
     }
-
-# Format
-def format():
-    return 'windows-1252' if name == 'nt' else 'utf-8'
 
 # Settings
 def getSettings():
@@ -40,6 +41,10 @@ def getSettings():
         'subfolder': config.get('DEFAULT', 'subfolder'),
         'custom_formatting': config.get('DEFAULT', 'custom_formatting')
     }
+
+# Format
+def format():
+    return 'windows-1252' if name == 'nt' else 'utf-8'
 
 # Get filename
 def getFilename(title, year, custom_formatting):
@@ -58,7 +63,12 @@ def removeAccents(query):
 
 # Unescape characters
 def unescape(query):
-    return HTMLParser().unescape(query)
+    # Python 3.0 and later
+    try:
+        return html.unescape(query)
+    # Python 2.7
+    except:
+        return HTMLParser.HTMLParser().unescape(query)
 
 # Match titles
 def matchTitle(title):

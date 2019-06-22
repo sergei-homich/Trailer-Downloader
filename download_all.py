@@ -1,18 +1,25 @@
 import sys
 sys.dont_write_bytecode = True
 from argparse import ArgumentParser
-from os import listdir, path, system
-import lib
+from lib import helpers, apple, tmdb
+from os import listdir, path
 
 # Arguments
 def getArguments():
-    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(lib.helpers.info()['name']))
-    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(lib.helpers.info()['name'], lib.helpers.info()['version']), help="show the version number and exit")
+    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(helpers.info()['name']))
+    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(helpers.info()['name'], helpers.info()['version']), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
     args = parser.parse_args()
-    return {
-        'directory': str(args.directory).decode(lib.helpers.format())
-    }
+    # Python 2.7
+    try:
+        return {
+            'directory': str(args.directory).decode(helpers.format()) if args.directory != None else args.directory
+        }
+    # Python 3.0 and later
+    except:
+        return {
+            'directory': str(args.directory) if args.directory != None else args.directory
+        }
 
 # Main
 def main():
@@ -20,7 +27,7 @@ def main():
     arguments = getArguments()
 
     # Settings
-    settings = lib.helpers.getSettings()
+    settings = helpers.getSettings()
 
     # Make sure a directory was passed
     if arguments['directory'] is not None:
@@ -53,7 +60,7 @@ def main():
                     arguments['directory'] = arguments['directory']+'/'+settings['subfolder']
 
                 # Get formatted filename
-                filename = lib.helpers.getFilename(arguments['title'], arguments['year'], settings['custom_formatting'])
+                filename = helpers.getFilename(arguments['title'], arguments['year'], settings['custom_formatting'])
 
                 # Make sure the trailer has not already been downloaded
                 if not path.exists(arguments['directory']+'/'+filename):
@@ -64,22 +71,23 @@ def main():
                     downloaded = False
 
                     # Make sure trailer file doesn't already exist in the directory
-                    if os.path.exists(arguments['directory']):
+                    if path.exists(arguments['directory']):
                         for name in listdir(arguments['directory']):
                             if filename[:-4] in name:
                                 downloaded = True
 
                     # Search Apple for trailer
                     if not downloaded:
-                        search = lib.apple.search(arguments['title'])
+                        # Search
+                        search = apple.search(arguments['title'])
 
                         # Iterate over search results
                         for result in search['results']:
 
                             # Filter by year and title
-                            if arguments['year'].lower() in result['releasedate'].lower() and lib.helpers.matchTitle(arguments['title']) == lib.helpers.matchTitle(lib.helpers.unescape(result['title'])):
+                            if arguments['year'].lower() in result['releasedate'].lower() and helpers.matchTitle(arguments['title']) == helpers.matchTitle(helpers.unescape(result['title'])):
 
-                                file = lib.apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
+                                file = apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
                                 # Update downloaded status
                                 if file:
@@ -88,27 +96,22 @@ def main():
 
                         # Search YouTube for trailer
                         if not downloaded:
-                            try:
-                                search = lib.tmdb.search(arguments['title'], settings['api_key'])
-                            except:
-                                print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
-                                sys.exit()
+                            # Search
+                            search = tmdb.search(arguments['title'], settings['api_key'])
 
                             # Iterate over search results
                             for result in search['results']:
 
                                 # Filter by year and title
-                                if arguments['year'].lower() in result['release_date'].lower() and lib.helpers.matchTitle(arguments['title']) == lib.helpers.matchTitle(result['title']):
+                                if arguments['year'].lower() in result['release_date'].lower() and helpers.matchTitle(arguments['title']) == helpers.matchTitle(result['title']):
 
                                     # Find trailers for movie
-                                    videos = lib.tmdb.videos(result['id'], settings['lang'], settings['region'], settings['api_key'])
+                                    videos = tmdb.videos(result['id'], settings['lang'], settings['region'], settings['api_key'])
 
                                     for item in videos['results']:
                                         if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
-                                            video = 'https://www.youtube.com/watch?v='+item['key']
-
                                             # Download trailer from YouTube
-                                            file = lib.tmdb.download(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
+                                            file = tmdb.download('https://www.youtube.com/watch?v='+item['key'], settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
 
                                             # Update downloaded status
                                             if file:

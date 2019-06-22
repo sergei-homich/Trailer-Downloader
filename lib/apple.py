@@ -1,18 +1,16 @@
 from __future__ import unicode_literals
 from json import loads
+from lib import helpers
 from os import makedirs, path
 from shutil import copyfileobj, move
-import helpers
 
 # Python 3.0 and later
 try:
-    from configparser import ConfigParser
     from urllib.request import *
     from urllib.error import *
 
 # Python 2.7
 except ImportError:
-    from ConfigParser import ConfigParser
     from urllib2 import *
 
 # Load json from url

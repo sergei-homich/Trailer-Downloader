@@ -1,20 +1,9 @@
 from __future__ import unicode_literals
 from json import loads
+from lib import helpers
 from os import makedirs, path
 from shutil import move
 from sys import exit
-import helpers
-
-# Python 3.0 and later
-try:
-    from configparser import ConfigParser
-    from urllib.request import *
-    from urllib.error import *
-
-# Python 2.7
-except ImportError:
-    from ConfigParser import ConfigParser
-    from urllib2 import *
 
 # tmdbsimple
 try:
@@ -67,13 +56,21 @@ def download(video, min_resolution, max_resolution, directory, filename):
 
 # Get videos
 def videos(id, lang, region, api_key):
-    tmdb.API_KEY = api_key
-    movie = tmdb.Movies(id)
-    return movie.videos(language=lang+'-'+region)
+    try:
+        tmdb.API_KEY = api_key
+        movie = tmdb.Movies(id)
+        return movie.videos(language=lang+'-'+region)
+    except:
+        print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
+        exit()
 
 # Search
 def search(query, api_key):
     query = helpers.removeSpecialChars(query)
-    tmdb.API_KEY = api_key
-    search = tmdb.Search()
-    return search.movie(query=query)
+    try:
+        tmdb.API_KEY = api_key
+        search = tmdb.Search()
+        return search.movie(query=query)
+    except:
+        print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
+        exit()
