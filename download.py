@@ -61,13 +61,12 @@ def main():
 
                 # Filter by year and title
                 if arguments['year'].lower() in result['releasedate'].lower() and lib.helpers.matchTitle(arguments['title']) == lib.helpers.matchTitle(lib.helpers.unescape(result['title'])):
-                    pass
-                    #file = lib.apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
+                    file = lib.apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
-                    # Update downloaded status
-                    #if file:
-                    #    downloaded = True
-                    #    break
+                     Update downloaded status
+                    if file:
+                        downloaded = True
+                        break
 
             # Search YouTube for trailer
             if not downloaded:
