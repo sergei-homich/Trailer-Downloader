@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from HTMLParser import HTMLParser
 from json import loads
 from os import makedirs, path
 from shutil import move
@@ -41,11 +40,11 @@ def download(video, min_resolution, max_resolution, directory, filename):
     options = {
         'format': 'bestvideo[ext=mp4][height<='+max_resolution+']+bestaudio[ext=m4a]',
         'default_search': 'ytsearch1:',
-        'restrict_filenames': 'TRUE',
+        'restrictfilenames': 'TRUE',
         'prefer_ffmpeg': 'TRUE',
         'quiet': 'TRUE',
         'no_warnings': 'TRUE',
-        'ignore_errors': 'TRUE',
+        'ignoreerrors': 'TRUE',
         'no_playlist': 'TRUE',
         'outtmpl': 'downloads/'+filename
     }
