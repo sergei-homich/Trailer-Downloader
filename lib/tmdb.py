@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from HTMLParser import HTMLParser
 from json import loads
 from os import makedirs, path
 from shutil import move

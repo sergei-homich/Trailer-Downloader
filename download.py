@@ -1,7 +1,9 @@
 import sys
+import os
 sys.dont_write_bytecode = True
 from argparse import ArgumentParser
 from os import listdir, path
+from lib import helpers, apple, tmdb
 import lib
 
 # Arguments
@@ -14,10 +16,10 @@ def getArguments():
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
     return {
-        'directory': str(args.directory).decode(format()) if args.directory != None else args.directory,
-        'file': str(args.file).decode(format()) if args.file != None else args.file,
-        'title': str(args.title).decode(format()) if args.title != None else args.title,
-        'year': str(args.year).decode(format()) if args.year != None else args.year
+        'directory': str(args.directory).decode("utf-8") if args.directory != None else args.directory,
+        'file': str(args.file).decode("utf-8") if args.file != None else args.file,
+        'title': str(args.title).decode("utf-8") if args.title != None else args.title,
+        'year': str(args.year).decode("utf-8") if args.year != None else args.year
     }
 
 # Main
@@ -59,13 +61,13 @@ def main():
 
                 # Filter by year and title
                 if arguments['year'].lower() in result['releasedate'].lower() and lib.helpers.matchTitle(arguments['title']) == lib.helpers.matchTitle(lib.helpers.unescape(result['title'])):
-
-                    file = lib.apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
+                    pass
+                    #file = lib.apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
                     # Update downloaded status
-                    if file:
-                        downloaded = True
-                        break
+                    #if file:
+                    #    downloaded = True
+                    #    break
 
             # Search YouTube for trailer
             if not downloaded:
