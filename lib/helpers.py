@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from os import name
+from sys import stdout
 from unicodedata import normalize
 from unidecode import unidecode
 
@@ -11,13 +12,14 @@ try:
 # Python 2.7
 except ImportError:
     from ConfigParser import ConfigParser
-    import HTMLParser
+    from HTMLParser import HTMLParser
 
 # unidecode
 try:
     from unidecode import unidecode
 except:
-    print('\033[91mERROR:\033[0m unidecode is not installed.')
+    # Logging
+    helpers.logging(True, 'danger', 'ERROR', 'Package unidecode is not installed.', True)
     sys.exit()
 
 # Info
@@ -68,8 +70,28 @@ def unescape(query):
         return html.unescape(query)
     # Python 2.7
     except:
-        return HTMLParser.HTMLParser().unescape(query)
+        return HTMLParser().unescape(query)
 
 # Match titles
 def matchTitle(title):
     return normalize('NFKD', removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace("'", '').replace('<', '').replace('>', '').replace('|', '').replace('.', '').replace('+', '').replace(' ', '').lower()).encode('ASCII', 'ignore')
+
+# Logging
+def logging(logging, type, title, message, newline):
+    if logging:
+        if type == 'default':
+            color = '\033[97m'
+        elif type == 'primary':
+            color = '\033[94m'
+        elif type == 'success':
+            color = '\033[92m'
+        elif type == 'warning':
+            color = '\033[93m'
+        elif type == 'danger':
+            color = '\033[91m'
+        else:
+            color = '\033[97m'
+        color_end = '\033[0m'
+
+        stdout.write(color+title+(': ' if message != None else '')+color_end+(message if message != None else '')+('\n' if newline else ' '))
+        stdout.flush()

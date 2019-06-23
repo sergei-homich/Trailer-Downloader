@@ -8,16 +8,19 @@ from os import listdir, path
 def getArguments():
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(helpers.info()['name']))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(helpers.info()['name'], helpers.info()['version']), help="show the version number and exit")
+    parser.add_argument("-l", "--logging", action="append_const", const="logging", help="display additional logging information")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
     args = parser.parse_args()
     # Python 2.7
     try:
         return {
+            'logging': True if args.logging else False,
             'directory': str(args.directory).decode(helpers.format()) if args.directory != None else args.directory
         }
     # Python 3.0 and later
     except:
         return {
+            'logging': True if args.logging else False,
             'directory': str(args.directory) if args.directory != None else args.directory
         }
 
@@ -31,7 +34,6 @@ def main():
 
     # Make sure a directory was passed
     if arguments['directory'] is not None:
-
         folder = arguments['directory']
 
         # Make sure folder exists
@@ -41,10 +43,8 @@ def main():
 
         # Iterate through items in folder
         for item in listdir(folder):
-
             # Make sure the item is a directory
             if path.isdir(folder+'/'+item):
-
                 # Get variables for the download script
                 try:
                     arguments['title'] = item[0:item.rfind('(')].strip()
@@ -64,7 +64,7 @@ def main():
 
                 # Make sure the trailer has not already been downloaded
                 if not path.exists(arguments['directory']+'/'+filename):
-
+                    # Log current item
                     print(item)
 
                     # Download status
@@ -83,10 +83,9 @@ def main():
 
                         # Iterate over search results
                         for result in search['results']:
-
                             # Filter by year and title
                             if arguments['year'].lower() in result['releasedate'].lower() and helpers.matchTitle(arguments['title']) == helpers.matchTitle(helpers.unescape(result['title'])):
-
+                                # Download trailer
                                 file = apple.download('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
                                 # Update downloaded status
@@ -101,16 +100,15 @@ def main():
 
                             # Iterate over search results
                             for result in search['results']:
-
                                 # Filter by year and title
                                 if arguments['year'].lower() in result['release_date'].lower() and helpers.matchTitle(arguments['title']) == helpers.matchTitle(result['title']):
-
                                     # Find trailers for movie
                                     videos = tmdb.videos(result['id'], settings['lang'], settings['region'], settings['api_key'])
 
+                                    # Iterate over video results
                                     for item in videos['results']:
                                         if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
-                                            # Download trailer from YouTube
+                                            # Download trailer
                                             file = tmdb.download('https://www.youtube.com/watch?v='+item['key'], settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
 
                                             # Update downloaded status
@@ -121,11 +119,9 @@ def main():
                                     break
 
                     else:
-
                         print('\033[91mERROR:\033[0m the trailer already exists in the selected directory')
 
     else:
-
         print('\033[91mERROR:\033[0m you must pass a directory to the script')
 
 # Run

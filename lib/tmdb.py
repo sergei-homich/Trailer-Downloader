@@ -9,14 +9,16 @@ from sys import exit
 try:
     import tmdbsimple as tmdb
 except:
-    print('\033[91mERROR:\033[0m tmdbsimple is not installed.')
+    # Logging
+    helpers.logging(True, 'danger', 'ERROR', 'Package tmdbsimple is not installed.', True)
     exit()
 
 # youtube_dl
 try:
     import youtube_dl
 except:
-    print('\033[91mERROR:\033[0m youtube_dl is not installed.')
+    # Logging
+    helpers.logging(True, 'danger', 'ERROR', 'Package youtube_dl is not installed.', True)
     exit()
 
 # Download
@@ -61,7 +63,8 @@ def videos(id, lang, region, api_key):
         movie = tmdb.Movies(id)
         return movie.videos(language=lang+'-'+region)
     except:
-        print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
+        # Logging
+        helpers.logging(True, 'danger', 'ERROR', 'Failed to connect to TMDB. Check your api key.', True)
         exit()
 
 # Search
@@ -72,5 +75,6 @@ def search(query, api_key):
         search = tmdb.Search()
         return search.movie(query=query)
     except:
-        print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
+        # Logging
+        helpers.logging(True, 'danger', 'ERROR', 'Failed to connect to TMDB. Check your api key.', True)
         exit()
