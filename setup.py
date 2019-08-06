@@ -14,7 +14,7 @@ setup(
   url='https://github.com/airship-david/Trailer-Downloader',
   classifiers=[
     "Programming Language :: Python :: 3.6",
-    "License :: OSI Approved :: GNU General Public License v3.0",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent"
   ],
   package_dir={'': 'src'},

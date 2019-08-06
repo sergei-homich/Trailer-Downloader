@@ -1,4 +1,6 @@
 .DS_STORE
 db.sqlite
 env
+build
+dist
 src/trailerdl.egg-info
