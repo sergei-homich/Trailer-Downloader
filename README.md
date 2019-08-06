@@ -39,7 +39,7 @@ trailerdl download --title "A Star Is Born" --year "2018" --destination "/path/t
 
 To download trailers for an entire library that already exists, use the command below. You will need to supply the directory that all of your movie folders are in. The script will iterate through all of your movie folders in the directory and it will automatically pull the title and year from the folder name. Trailers will be downloaded into the folder for each movie.
 ```
-trailerdl download-library --directory "/path/to/movies"
+trailerdl download-library --directory "/path/to/movies" --type "Movies" --extra "Trailers" --verbose
 ```
 
 ### Automation
