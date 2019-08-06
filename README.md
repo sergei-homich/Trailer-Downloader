@@ -52,7 +52,7 @@ This script can also be fired by Radarr, Sonarr, or Tautulli to automatically do
 
 #### Tautulli
 
-### Notes
+## Notes
 
 This package expects your movies and series to be in a very specific structure. If your structure does not match the format below, you **will not** be able to use this package.
 
@@ -70,7 +70,7 @@ This package expects your movies and series to be in a very specific structure. 
 -----Season 1  
 -----Season 2  
 
-### Building
+## Building
 
 If you'd like to contribute to this project, please use the commands below to get it set up and running on your machine.
 ```
@@ -80,5 +80,3 @@ python3 -m venv env
 source env/bin/activate
 pip install --editable .
 ```
-
-**Enjoy!**
