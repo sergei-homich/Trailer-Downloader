@@ -15,8 +15,8 @@ class Config:
                 help_option_names=['-h', '--help']
             )
         }
-        if os.path.exists(os.path.split(os.path.abspath(__file__))[0]+'/../../../../settings.json'):
-            with io.open(os.path.split(os.path.abspath(__file__))[0]+'/../../../../settings.json', mode='r', encoding='utf8') as file:
+        if os.path.exists(os.path.split(os.path.abspath(__file__))[0]+'/../../settings.json'):
+            with io.open(os.path.split(os.path.abspath(__file__))[0]+'/../../settings.json', mode='r', encoding='utf8') as file:
                 try:
                     response = {**response, **json.load(file)}
                 except:

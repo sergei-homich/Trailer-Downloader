@@ -4,7 +4,7 @@ import sqlite3
 class Database:
     # Initialize
     def __init__(self):
-        self.db = os.path.split(os.path.abspath(__file__))[0]+'/../../../../db.sqlite'
+        self.db = os.path.split(os.path.abspath(__file__))[0]+'/../../db.sqlite'
         if not os.path.exists(self.db):
             self.create()
 
