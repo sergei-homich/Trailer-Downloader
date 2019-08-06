@@ -32,7 +32,7 @@ Guidelines on how extras must be formatted to work with Plex can be found [here]
 
 To download media items for a specific movie, use the command below. You will need to provide the movie title, year, and destination. Optionally you can provide the library type and media types to download. The verbose flag will display additional logging information.
 ```
-trailerdl download --title "A Star Is Born" --year "2018" --destination "/path/to/movies/A Star Is Born (2018) --type "Movies" --media "Trailers" --verbose
+trailerdl download --title "A Star Is Born" --year "2018" --destination "/path/to/movies/A Star Is Born (2018) --type "Movies" --extra "Trailers" --verbose
 ```
 
 ### Download Extras for All Movies or Series in a Directory
@@ -46,11 +46,11 @@ trailerdl download-library --directory "/path/to/movies"
 
 This script can also be fired by Radarr, Sonarr, or Tautulli to automatically download a trailer each time a new movie or series is added to your collection.
 
-##### Radarr
+#### Radarr
 
-##### Sonarr
+#### Sonarr
 
-##### Tautulli
+#### Tautulli
 
 ### Notes
 
@@ -62,13 +62,13 @@ This package expects your movies and series to be in a very specific structure. 
 ---Movie Title 2 (2009)  
 -----Movie Title 2 (2009).mkv  
 
--Series
----Series Title 1 (2018)
------Season 1
------Season 2
+-Series  
+---Series Title 1 (2018)  
+-----Season 1  
+-----Season 2  
 ---Series Title 2 (2009)  
------Season 1
------Season 2
+-----Season 1  
+-----Season 2  
 
 ### Building
 
