@@ -78,5 +78,5 @@ git clone https://github.com/airship-david/Trailer-Downloader.git
 cd Trailer-Downloader
 python3 -m venv env
 source env/bin/activate
-pip install --editable .
+pip3 install --editable .
 ```
