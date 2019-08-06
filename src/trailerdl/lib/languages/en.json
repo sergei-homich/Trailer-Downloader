@@ -1,0 +1,98 @@
+{
+  "Movies": "Movies",
+  "Series": "Series",
+  "Trailers": "Trailers",
+  "Teasers": "Teasers",
+  "Scenes": "Scenes",
+  "Featurettes": "Featurettes",
+  "Behind The Scenes": "Behind The Scenes",
+  "Bloopers": "Bloopers",
+  "title": "Title",
+  "year": "Year",
+  "destination": "Destination",
+  "settings": "Settings",
+  "tmdb_api_key": "TMDB API Key",
+  "region": "Region",
+  "language": "Language",
+  "min_resolution": "Min Resolution",
+  "max_resolution": "Max Resolution",
+  "scrapers": "Scrapers",
+  "limits": "Limits",
+  "subfolders": "Subfolders",
+  "formatting": "Formatting",
+  "selection": "Selection",
+  "directory": "Directory",
+  "library_type": "Library Type",
+  "extra_types": "Extra Types",
+  "scanning": "Scanning",
+  "searching": "Searching",
+  "downloading": "Downloading",
+  "time": "Time",
+  "missing": "Missing",
+  "found": "Found",
+  "downloaded": "Downloaded",
+  "searching_apple": "Searching Apple...",
+  "searching_youtube": "Searching YouTube...",
+  "searching_tmdb": "Searching TMDB...",
+  "incorrect_python_version": "Incorrect version of Python detected. You must be running version 3.0 or higher.",
+  "module_not_found": "Failed to import one or more of the required modules. Please see the documentation.",
+  "scraper_not_found": "One of the scrapers you specified does not work with this application. Please check your settings.json file.",
+  "directory_does_not_exist": "The specified directory does not exist. Please check your arguments.",
+  "invalid_tmdb_api_key": "Invalid api key for TMDB. Please check your settings.json file.",
+  "missing_radarr_environment_variables": "Missing Radarr environment variables. Please make sure that only Radarr is firing this script.",
+  "arguments": {
+    "title": {
+      "name": "title",
+      "var": "TITLE",
+      "description": "Title"
+    },
+    "year": {
+      "name": "year",
+      "var": "YEAR",
+      "description": "Year"
+    },
+    "destination": {
+      "name": "destination",
+      "var": "PATH",
+      "description": "Destination Directory Path"
+    },
+    "directory": {
+      "name": "directory",
+      "var": "PATH",
+      "description": "Scan Directory Path"
+    },
+    "file": {
+      "name": "file",
+      "var": "PATH",
+      "description": "File Path"
+    },
+    "type": {
+      "name": "type",
+      "var": "TYPE",
+      "description": "Library Type",
+      "choices": [
+        "Movies",
+        "Series"
+      ],
+      "default": "Movies"
+    },
+    "extra": {
+      "name": "extra",
+      "var": "TYPE",
+      "description": "Extra Type",
+      "choices": [
+        "Trailers",
+        "Teasers",
+        "Scenes",
+        "Featurettes",
+        "Behind The Scenes",
+        "Bloopers"
+      ],
+      "default": "Trailers"
+    },
+    "verbose": {
+      "name": "verbose",
+      "description": "Extra Logging"
+    }
+  }
+}

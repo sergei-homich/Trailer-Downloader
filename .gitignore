@@ -1,2 +1,4 @@
-/downloads
-.DS_Store
+.DS_STORE
+db.sqlite
+env
+src/trailerdl.egg-info

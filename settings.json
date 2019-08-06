@@ -1,0 +1,36 @@
+{
+  "tmdb_api_key": "aa8a7b9a835c254d96a19e98bd000632",
+  "region": "US",
+  "language": "en",
+  "min_resolution": 360,
+  "max_resolution": 1080,
+  "scrapers": [
+    "apple",
+    "tmdb",
+    "youtube"
+  ],
+  "limits": {
+    "Trailers": 1,
+    "Teasers": 1,
+    "Scenes": 1,
+    "Featurettes": 1,
+    "Behind The Scenes": 1,
+    "Bloopers": 1
+  },
+  "subfolders": {
+    "Trailers": "",
+    "Teasers": "",
+    "Scenes": "",
+    "Featurettes": "",
+    "Behind The Scenes": "",
+    "Bloopers": ""
+  },
+  "formatting": {
+    "Trailers": "%title% (%year%) Trailer %number%-trailer",
+    "Teasers": "%title% (%year%) Teaser %number%-short",
+    "Scenes": "%title% (%year%) Scene %number%-scene",
+    "Featurettes": "%title% (%year%) Featurette %number%-featurette",
+    "Behind The Scenes": "%title% (%year%) Behind The Scenes %number%-behindthescenes",
+    "Bloopers": "%title% (%year%) Blooper %number%-blooper"
+  }
+}
