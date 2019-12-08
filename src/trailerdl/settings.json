@@ -6,8 +6,7 @@
   "max_resolution": 1080,
   "scrapers": [
     "apple",
-    "tmdb",
-    "youtube"
+    "tmdb"
   ],
   "limits": {
     "Trailers": 1,
@@ -18,19 +17,19 @@
     "Bloopers": 1
   },
   "subfolders": {
-    "Trailers": "",
-    "Teasers": "",
-    "Scenes": "",
-    "Featurettes": "",
-    "Behind The Scenes": "",
-    "Bloopers": ""
+    "Trailers": "Trailers",
+    "Teasers": "Other",
+    "Scenes": "Scenes",
+    "Featurettes": "Featurettes",
+    "Behind The Scenes": "Behind The Scenes",
+    "Bloopers": "Bloopers"
   },
   "formatting": {
-    "Trailers": "%title% (%year%) Trailer %number%-trailer",
-    "Teasers": "%title% (%year%) Teaser %number%-short",
-    "Scenes": "%title% (%year%) Scene %number%-scene",
-    "Featurettes": "%title% (%year%) Featurette %number%-featurette",
-    "Behind The Scenes": "%title% (%year%) Behind The Scenes %number%-behindthescenes",
-    "Bloopers": "%title% (%year%) Blooper %number%-blooper"
+    "Trailers": "%title% (%year%) Trailer %number%",
+    "Teasers": "%title% (%year%) Teaser %number%",
+    "Scenes": "%title% (%year%) Scene %number%",
+    "Featurettes": "%title% (%year%) Featurette %number%",
+    "Behind The Scenes": "%title% (%year%) Behind The Scenes %number%",
+    "Bloopers": "%title% (%year%) Blooper %number%"
   }
 }
