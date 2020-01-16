@@ -5,6 +5,7 @@ import os
 import shutil
 import socket
 import sys
+import time
 import unicodedata
 
 # Python 3.0 and later
@@ -19,6 +20,13 @@ except ImportError:
     from ConfigParser import *
     from urllib2 import *
     import HTMLParser
+
+# requests
+try:
+    from requests import exceptions
+except:
+    print('\033[91mERROR:\033[0m requests is not installed.')
+    sys.exit()
 
 # tmdbsimple
 try:
@@ -205,14 +213,38 @@ def searchApple(query):
 def searchTMDB(query, api_key):
     query = removeSpecialChars(query)
     tmdb.API_KEY = api_key
-    search = tmdb.Search()
-    return search.movie(query=query)
+    while True:
+        try:
+            search = tmdb.Search()
+            return search.movie(query=query)
+        except exceptions.HTTPError as e:
+            exceptionsTMDB(e)
 
 # Search TMDB for videos
 def videosTMDB(id, lang, region, api_key):
     tmdb.API_KEY = api_key
-    movie = tmdb.Movies(id)
-    return movie.videos(language=lang+'-'+region)
+    while True:
+        try:
+            movie = tmdb.Movies(id)
+            return movie.videos(language=lang+'-'+region)
+        except exceptions.HTTPError as e:
+            exceptionsTMDB(e)
+
+# Handle TMDB exceptions
+def exceptionsTMDB(e):
+    if e.response.status_code == 401:
+        print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key ('+tmdb.API_KEY+').')
+        sys.exit()
+    elif e.response.status_code == 429:
+        if "Retry-After" in e.response.headers:
+            wait = int(e.response.headers["Retry-After"])
+        else:
+            wait = 10
+        print('\033[93mWARNING:\033[0m Exceeded TMDB api request limit. Waiting for '+str(wait)+' seconds...')
+        time.sleep(wait)
+    else:
+        print('\033[91mERROR:\033[0m Other TMDB Error ('+str(e)+').')
+        sys.exit()
 
 # Download file from YouTube
 def youtubeDownload(video, min_resolution, max_resolution, directory, filename):
@@ -296,11 +328,7 @@ def main():
 
             # Search YouTube for trailer
             if not downloaded:
-                try:
-                    search = searchTMDB(arguments['title'], settings['api_key'])
-                except:
-                    print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
-                    sys.exit()
+                search = searchTMDB(arguments['title'], settings['api_key'])
 
                 # Iterate over search results
                 for result in search['results']:
