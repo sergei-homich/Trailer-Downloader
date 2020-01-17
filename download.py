@@ -1,24 +1,33 @@
-from __future__ import unicode_literals
+import sys
+
+# Disable bytecode
+sys.dont_write_bytecode = True
+
+# Make sure python 3 is being used
+if sys.version_info[0] < 3:
+    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
+    sys.exit()
+
+# python modules
 from argparse import ArgumentParser
+from configparser import *
+from urllib.request import *
+from urllib.error import *
+import html.parser
 import json
 import os
 import shutil
 import socket
 import sys
+import time
 import unicodedata
 
-# Python 3.0 and later
+# requests
 try:
-    from configparser import *
-    from urllib.request import *
-    from urllib.error import *
-    import html.parser
-
-# Python 2.7
-except ImportError:
-    from ConfigParser import *
-    from urllib2 import *
-    import HTMLParser
+    from requests import exceptions
+except:
+    print('\033[91mERROR:\033[0m requests is not installed.')
+    sys.exit()
 
 # tmdbsimple
 try:
@@ -44,7 +53,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.08'
+    version = '1.09'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
@@ -52,22 +61,12 @@ def getArguments():
     parser.add_argument("-t", "--title", dest="title", help="title of movie", metavar="TITLE")
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
-    # Python 2.7
-    try:
-        return {
-            'directory': str(args.directory).decode(format()) if args.directory != None else args.directory,
-            'file': str(args.file).decode(format()) if args.file != None else args.file,
-            'title': str(args.title).decode(format()) if args.title != None else args.title,
-            'year': str(args.year).decode(format()) if args.year != None else args.year
-        }
-    # Python 3.0 and later
-    except:
-        return {
-            'directory': str(args.directory) if args.directory != None else args.directory,
-            'file': str(args.file) if args.file != None else args.file,
-            'title': str(args.title) if args.title != None else args.title,
-            'year': str(args.year) if args.year != None else args.year
-        }
+    return {
+        'directory': str(args.directory) if args.directory != None else args.directory,
+        'file': str(args.file) if args.file != None else args.file,
+        'title': str(args.title) if args.title != None else args.title,
+        'year': str(args.year) if args.year != None else args.year
+    }
 
 # Settings
 def getSettings():
@@ -98,12 +97,7 @@ def removeAccents(query):
 
 # Unescape characters
 def unescape(query):
-    # Python 3.0 and later
-    try:
-        return html.unescape(query)
-    # Python 2.7
-    except:
-        return HTMLParser.HTMLParser().unescape(query)
+    return html.unescape(query)
 
 # Match titles
 def matchTitle(title):
@@ -205,14 +199,38 @@ def searchApple(query):
 def searchTMDB(query, api_key):
     query = removeSpecialChars(query)
     tmdb.API_KEY = api_key
-    search = tmdb.Search()
-    return search.movie(query=query)
+    while True:
+        try:
+            search = tmdb.Search()
+            return search.movie(query=query)
+        except exceptions.HTTPError as e:
+            exceptionsTMDB(e)
 
 # Search TMDB for videos
 def videosTMDB(id, lang, region, api_key):
     tmdb.API_KEY = api_key
-    movie = tmdb.Movies(id)
-    return movie.videos(language=lang+'-'+region)
+    while True:
+        try:
+            movie = tmdb.Movies(id)
+            return movie.videos(language=lang+'-'+region)
+        except exceptions.HTTPError as e:
+            exceptionsTMDB(e)
+
+# Handle TMDB exceptions
+def exceptionsTMDB(e):
+    if e.response.status_code == 401:
+        print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key ('+tmdb.API_KEY+').')
+        sys.exit()
+    elif e.response.status_code == 429:
+        if "Retry-After" in e.response.headers:
+            wait = int(e.response.headers["Retry-After"])
+        else:
+            wait = 10
+        print('\033[93mWARNING:\033[0m Exceeded TMDB api request limit. Waiting for '+str(wait)+' seconds...')
+        time.sleep(wait)
+    else:
+        print('\033[91mERROR:\033[0m Other TMDB Error ('+str(e)+').')
+        sys.exit()
 
 # Download file from YouTube
 def youtubeDownload(video, min_resolution, max_resolution, directory, filename):
@@ -296,11 +314,7 @@ def main():
 
             # Search YouTube for trailer
             if not downloaded:
-                try:
-                    search = searchTMDB(arguments['title'], settings['api_key'])
-                except:
-                    print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key.')
-                    sys.exit()
+                search = searchTMDB(arguments['title'], settings['api_key'])
 
                 # Iterate over search results
                 for result in search['results']:
