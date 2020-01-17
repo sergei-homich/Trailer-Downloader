@@ -1,5 +1,19 @@
-from __future__ import unicode_literals
+import sys
+
+# Disable bytecode
+sys.dont_write_bytecode = True
+
+# Make sure python 3 is being used
+if sys.version_info[0] < 3:
+    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
+    sys.exit()
+
+# python modules
 from argparse import ArgumentParser
+from configparser import *
+from urllib.request import *
+from urllib.error import *
+import html.parser
 import json
 import os
 import shutil
@@ -7,19 +21,6 @@ import socket
 import sys
 import time
 import unicodedata
-
-# Python 3.0 and later
-try:
-    from configparser import *
-    from urllib.request import *
-    from urllib.error import *
-    import html.parser
-
-# Python 2.7
-except ImportError:
-    from ConfigParser import *
-    from urllib2 import *
-    import HTMLParser
 
 # requests
 try:
@@ -60,22 +61,12 @@ def getArguments():
     parser.add_argument("-t", "--title", dest="title", help="title of movie", metavar="TITLE")
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
-    # Python 2.7
-    try:
-        return {
-            'directory': str(args.directory).decode(format()) if args.directory != None else args.directory,
-            'file': str(args.file).decode(format()) if args.file != None else args.file,
-            'title': str(args.title).decode(format()) if args.title != None else args.title,
-            'year': str(args.year).decode(format()) if args.year != None else args.year
-        }
-    # Python 3.0 and later
-    except:
-        return {
-            'directory': str(args.directory) if args.directory != None else args.directory,
-            'file': str(args.file) if args.file != None else args.file,
-            'title': str(args.title) if args.title != None else args.title,
-            'year': str(args.year) if args.year != None else args.year
-        }
+    return {
+        'directory': str(args.directory) if args.directory != None else args.directory,
+        'file': str(args.file) if args.file != None else args.file,
+        'title': str(args.title) if args.title != None else args.title,
+        'year': str(args.year) if args.year != None else args.year
+    }
 
 # Settings
 def getSettings():
@@ -106,12 +97,7 @@ def removeAccents(query):
 
 # Unescape characters
 def unescape(query):
-    # Python 3.0 and later
-    try:
-        return html.unescape(query)
-    # Python 2.7
-    except:
-        return HTMLParser.HTMLParser().unescape(query)
+    return html.unescape(query)
 
 # Match titles
 def matchTitle(title):

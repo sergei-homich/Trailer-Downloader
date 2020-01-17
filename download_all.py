@@ -1,14 +1,24 @@
-from argparse import ArgumentParser
-import os
 import sys
 
-# Python 3.0 and later
-try:
-    from configparser import *
+# Disable bytecode
+sys.dont_write_bytecode = True
 
-# Python 2.7
-except ImportError:
-    from ConfigParser import *
+# Make sure python 3 is being used
+if sys.version_info[0] < 3:
+    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
+    sys.exit()
+
+# python modules
+from argparse import ArgumentParser
+from configparser import *
+import os
+
+# download.py
+try:
+    from download import main as downloadItem
+except:
+    print('\033[91mERROR:\033[0m download.py not found')
+    sys.exit()
 
 # Arguments
 def getArguments():
@@ -28,8 +38,7 @@ def getSettings():
     config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     return {
         'subfolder': config.get('DEFAULT', 'subfolder'),
-        'custom_formatting': config.get('DEFAULT', 'custom_formatting'),
-        'python_path': config.get('DEFAULT', 'python_path')
+        'custom_formatting': config.get('DEFAULT', 'custom_formatting')
     }
 
 # Main
@@ -48,13 +57,6 @@ def main():
             print('\033[91mERROR:\033[0m The specified directory does not exist. Check your arguments.')
             sys.exit()
 
-        # Make sure specified python path exists or attempt to use default if none is set
-        if settings['python_path'].strip() and not os.path.exists(settings['python_path']):
-            print('\033[91mERROR:\033[0m The specified path to python does not exist. Check your settings.')
-            sys.exit()
-        else:
-            settings['python_path'] = 'python'
-
         # Iterate through items in directory
         for item in os.listdir(arguments['directory']):
 
@@ -68,8 +70,7 @@ def main():
                     directory = arguments['directory']+'/'+item
                 except:
                     print(item)
-                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
-                    continue
+                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping...')
 
                 # If subfolder setting is set, add it to the destination directory
                 if settings['subfolder'].strip():
@@ -89,9 +90,11 @@ def main():
                     # Print current item
                     print(item)
 
-                    # Download trailer for item
-                    os.system(settings['python_path']+' '+os.path.split(os.path.abspath(__file__))[0]+'/download.py --title "'+title+'" --year "'+year+'" --directory "'+directory+'"')
+                    # Set up arguments for other script
+                    sys.argv = [os.path.split(os.path.abspath(__file__))[0]+'/download.py', '--title', title, '--year', year, '--directory', directory]
 
+                    # Run other script
+                    downloadItem()
     else:
 
         print('\033[91mERROR:\033[0m you must pass a directory to the script')
