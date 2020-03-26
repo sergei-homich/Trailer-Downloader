@@ -1,5 +1,5 @@
 # Trailer-Downloader
-Simple set of python scripts for downloading a movie trailer from Apple or from YouTube with help from TMDB. For quality purposes, the scripts will always attempt to download a trailer from Apple before falling back to TMDB and YouTube. This is useful if you are running a media server like Plex and you would like to have local trailers for each of your local movies.
+A simple set of python scripts for downloading a movie trailer from Apple or from YouTube with help from TMDB. For quality purposes, the scripts will always attempt to download a trailer from Apple before falling back to TMDB and YouTube. You can also download missing trailers for an entire library at once or integrate the script with Radarr or Tautulli to download trailers automatically. This project is useful if you are running a media server like Plex and you would like to have local trailers for each of your movies.
 
 ## Requirements
 -[Python 3.0+](https://www.python.org/)
@@ -16,27 +16,22 @@ Simple set of python scripts for downloading a movie trailer from Apple or from 
 
 ## Installation
 ```
-sudo -H pip install -r requirements.txt
+sudo python3 -m pip install -r requirements.txt
 ```
 
 ## Settings
 ```
 cp settings.ini.example settings.ini
 ```
-Edit the **settings.ini** file. Here you can add your api key for TMDB and set up your country code, language, resolution settings, subfolders, and custom formatting.
+Create and edit the **settings.ini** file. Here you can add your api key for TMDB and set up your country code, language, resolution settings, subfolders, and custom formatting options.
 
 ## Usage
 
 ### Download Trailer For Specific Movie
 
-To download a trailer for a specific movie, use the command below. You will need to provide the movie title, year, and directory or file to the script.
+To download a trailer for a specific movie, use the command below. You will need to provide the movie title, year, and directory to the script.
 ```
 python3 download.py --title "A Star Is Born" --year "2018" --directory "/path/to/movies/A Star Is Born (2018)"
-```
-
-This script can also be ran with an application like Tautulli to automatically download a trailer each time a new movie is added to Plex. To set this up, open Tautulli and go to Settings > Notification Agents and add a new notification agent. The type should be "script" and you'll want to add the path to the folder the scripts are located in and select download.py as your script in the configuration tab. Also add a name for the description. Next, go to the triggers tab and check the box for "Recently Added" and then go to the conditions tab and add a condition to only fire when "media type is movie". For the arguments tab, go to the "Recently Added" section and add the code below. After that, be sure to save it and you're all set.
-```
-<movie>nopythonpath python3 --title "{title}" --year "{year}" --file "{file}"</movie>
 ```
 
 ### Download Trailers For All Movies In A Directory
@@ -46,7 +41,22 @@ To download trailers for an entire library that already exists, use the command 
 python3 download_all.py --directory "/path/to/movies"
 ```
 
-This script expects your movies to be in a very specific structure. If your movies do not match the format below, you **will not** be able to use this script.
+### Download Trailer Automatically
+
+This script can also be fired by Radarr or Tautulli to automatically download a trailer each time a new movie is added to your collection.
+
+#### Radarr
+To set this up, open Radarr and got to Setting > Connect. Create a new notification and set the type to "Custom Script". Choose a name for your script and check the boxes for "On Import", "On Upgrade", and "On Rename". Set the path to point to the **download_radarr.py** script and be sure to save your changes.
+
+#### Tautulli
+To set this up, open Tautulli and go to Settings > Notification Agents and add a new notification agent. The type should be "script" and you'll want to add the path to the folder the scripts are located in and select **download_tautulli.py** as your script in the configuration tab. Also add a name for the description. Next, go to the triggers tab and check the box for "Recently Added" and then go to the conditions tab and add a condition to only fire when "media type is movie". For the arguments tab, go to the "Recently Added" section and add the snippet below. Be sure to save it and you're all set.
+```
+<movie>nopythonpath python3 --file "{file}"</movie>
+```
+
+## Notes
+
+These scripts expect your movies to be in a very specific structure. If your movies do not match the format below, you **will not** be able to use this.
 
 -Movies  
 ---Movie Title 1 (2014)  
