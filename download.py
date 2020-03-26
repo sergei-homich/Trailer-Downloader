@@ -1,14 +1,3 @@
-import sys
-
-# Disable bytecode
-sys.dont_write_bytecode = True
-
-# Make sure python 3 is being used
-if sys.version_info[0] < 3:
-    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
-    sys.exit()
-
-# python modules
 from argparse import ArgumentParser
 from configparser import *
 from urllib.request import *
@@ -21,6 +10,14 @@ import socket
 import sys
 import time
 import unicodedata
+
+# Disable bytecode
+sys.dont_write_bytecode = True
+
+# Make sure python 3 is being used
+if sys.version_info[0] < 3:
+    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
+    sys.exit()
 
 # requests
 try:
@@ -53,12 +50,12 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.09'
+    version = '1.10'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
-    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
-    parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
-    parser.add_argument("-t", "--title", dest="title", help="title of movie", metavar="TITLE")
-    parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
+    parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
+    parser.add_argument('-d', '--directory', dest='directory', help='full path of directory to copy downloaded trailer', metavar='DIRECTORY')
+    parser.add_argument('-t', '--title', dest='title', help='title of movie', metavar='TITLE')
+    parser.add_argument('-y', '--year', dest='year', help='release year of movie', metavar='YEAR')
     args = parser.parse_args()
     return {
         'directory': str(args.directory) if args.directory != None else args.directory,
@@ -88,7 +85,7 @@ def format():
 
 # Remove special characters
 def removeSpecialChars(query):
-    return "".join([ch for ch in query if ch.isalnum() or ch.isspace()])
+    return ''.join([ch for ch in query if ch.isalnum() or ch.isspace()])
 
 # Remove accent characters
 def removeAccents(query):
@@ -100,7 +97,7 @@ def unescape(query):
 
 # Match titles
 def matchTitle(title):
-    return unicodedata.normalize('NFKD', removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace('"', '').replace("'", '').replace('<', '').replace('>', '').replace('|', '').replace('.', '').replace('+', '').replace(' ', '').lower()).encode('ASCII', 'ignore')
+    return unicodedata.normalize('NFKD', removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace(''', '').replace(''', '').replace('<', '').replace('>', '').replace('|', '').replace('.', '').replace('+', '').replace(' ', '').lower()).encode('ASCII', 'ignore')
 
 # Load json from url
 def loadJson(url):
@@ -144,13 +141,13 @@ def mapRes(res):
     res_mapping = {'480': u'sd', '720': u'hd720', '1080': u'hd1080'}
     if res not in res_mapping:
         res_string = ', '.join(res_mapping.keys())
-        raise ValueError("Invalid resolution. Valid values: %s" % res_string)
+        raise ValueError('Invalid resolution. Valid values: %s' % res_string)
     return res_mapping[res]
 
 # Convert source url to file url
 def convertUrl(src_url, res):
-    src_ending = "_%sp.mov" % res
-    file_ending = "_h%sp.mov" % res
+    src_ending = '_%sp.mov' % res
+    file_ending = '_h%sp.mov' % res
     return src_url.replace(src_ending, file_ending)
 
 # Download the file
@@ -221,8 +218,8 @@ def exceptionsTMDB(e):
         print('\033[91mERROR:\033[0m Failed to connect to TMDB. Check your api key ('+tmdb.API_KEY+').')
         sys.exit()
     elif e.response.status_code == 429:
-        if "Retry-After" in e.response.headers:
-            wait = int(e.response.headers["Retry-After"])
+        if 'Retry-After' in e.response.headers:
+            wait = int(e.response.headers['Retry-After'])
         else:
             wait = 10
         print('\033[93mWARNING:\033[0m Exceeded TMDB api request limit. Waiting for '+str(wait)+' seconds...')

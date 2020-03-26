@@ -1,3 +1,6 @@
+from argparse import ArgumentParser
+from configparser import *
+import os
 import sys
 
 # Disable bytecode
@@ -8,11 +11,6 @@ if sys.version_info[0] < 3:
     print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
     sys.exit()
 
-# python modules
-from argparse import ArgumentParser
-from configparser import *
-import os
-
 # download.py
 try:
     from download import main as downloadItem
@@ -22,11 +20,11 @@ except:
 
 # Arguments
 def getArguments():
-    name = 'Trailer-Downloader'
-    version = '1.09'
+    name = 'Trailer-Downloader Tautulli Integration'
+    version = '1.10'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
-    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
-    parser.add_argument("-f", "--file", dest="file", help="full path of movie file", metavar="FILE")
+    parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
+    parser.add_argument('-f', '--file', dest='file', help='full path of movie file', metavar='FILE')
     args = parser.parse_args()
     return {
         'file': str(args.file) if args.file != None else args.file
@@ -52,7 +50,7 @@ def main():
             year = os.path.basename(directory)[os.path.basename(directory).rindex('(')+1:].split(')')[0].strip()
         except:
             print(arguments['file'])
-            print('\033[93mWARNING:\033[0m Failed to extract title and year from radarr movie path. Skipping...')
+            print('\033[93mWARNING:\033[0m Failed to extract title and year from file. Skipping...')
 
         # Set up arguments for other script
         sys.argv = [os.path.split(os.path.abspath(__file__))[0]+'/download.py', '--title', title, '--year', year, '--directory', directory]

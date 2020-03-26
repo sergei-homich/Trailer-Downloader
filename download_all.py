@@ -1,3 +1,6 @@
+from argparse import ArgumentParser
+from configparser import *
+import os
 import sys
 
 # Disable bytecode
@@ -8,11 +11,6 @@ if sys.version_info[0] < 3:
     print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
     sys.exit()
 
-# python modules
-from argparse import ArgumentParser
-from configparser import *
-import os
-
 # download.py
 try:
     from download import main as downloadItem
@@ -22,11 +20,11 @@ except:
 
 # Arguments
 def getArguments():
-    name = 'Trailer-Downloader'
-    version = '1.09'
+    name = 'Trailer-Downloader Library Integration'
+    version = '1.10'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB for all folders in a directory'.format(name))
-    parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
-    parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
+    parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
+    parser.add_argument('-d', '--directory', dest='directory', help='directory used to find movie titles and years', metavar='DIRECTORY')
     args = parser.parse_args()
     return {
         'directory': args.directory
