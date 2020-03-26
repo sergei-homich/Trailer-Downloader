@@ -54,16 +54,14 @@ except:
 def getArguments():
     name = 'Trailer-Downloader'
     version = '1.09'
-    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube'.format(name))
+    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="full path of directory to copy downloaded trailer", metavar="DIRECTORY")
-    parser.add_argument("-f", "--file", dest="file", help="full path of movie file", metavar="FILE")
     parser.add_argument("-t", "--title", dest="title", help="title of movie", metavar="TITLE")
     parser.add_argument("-y", "--year", dest="year", help="release year of movie", metavar="YEAR")
     args = parser.parse_args()
     return {
         'directory': str(args.directory) if args.directory != None else args.directory,
-        'file': str(args.file) if args.file != None else args.file,
         'title': str(args.title) if args.title != None else args.title,
         'year': str(args.year) if args.year != None else args.year
     }
@@ -270,12 +268,8 @@ def main():
     # Settings
     settings = getSettings()
 
-    # Make sure a movie directory or file, title, and year was passed
-    if (arguments['directory'] != None or arguments['file'] != None) and arguments['title'] != None and arguments['year'] != None:
-
-        # If directory argument is not set, get directory from file
-        if arguments['directory'] == None and arguments['file'] != None:
-            arguments['directory'] = os.path.abspath(os.path.dirname(arguments['file']))
+    # Make sure a movie directory, title, and year was passed
+    if arguments['directory'] != None and arguments['title'] != None and arguments['year'] != None:
 
         # If subfolder setting is set, add it to the directory
         if settings['subfolder'].strip():
@@ -346,7 +340,7 @@ def main():
 
     else:
 
-        print('\033[91mERROR:\033[0m you must pass a movie directory or file, title, and year to the script')
+        print('\033[91mERROR:\033[0m you must pass a directory, title, and year to the script')
 
 # Run
 if __name__ == '__main__':

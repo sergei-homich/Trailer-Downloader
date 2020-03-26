@@ -24,7 +24,7 @@ except:
 def getArguments():
     name = 'Trailer-Downloader'
     version = '1.09'
-    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube for all folders in a directory'.format(name))
+    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB for all folders in a directory'.format(name))
     parser.add_argument("-v", "--version", action='version', version='{} {}'.format(name, version), help="show the version number and exit")
     parser.add_argument("-d", "--directory", dest="directory", help="directory used to find movie titles and years", metavar="DIRECTORY")
     args = parser.parse_args()
