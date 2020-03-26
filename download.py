@@ -70,18 +70,19 @@ def getArguments():
 
 # Settings
 def getSettings():
-    config = ConfigParser()
-    config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
-    return {
-        'api_key': config.get('DEFAULT', 'tmdb_api_key'),
-        'region': config.get('DEFAULT', 'region'),
-        'lang': config.get('DEFAULT', 'lang'),
-        'resolution': config.get('DEFAULT', 'resolution'),
-        'max_resolution': config.get('DEFAULT', 'max_resolution'),
-        'min_resolution': config.get('DEFAULT', 'min_resolution'),
-        'subfolder': config.get('DEFAULT', 'subfolder'),
-        'custom_formatting': config.get('DEFAULT', 'custom_formatting')
-    }
+    if not os.path.exists(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini'):
+        print('\033[91mERROR:\033[0m Could not find the settings.ini file. Create one from the settings.ini.example file to get started.')
+        sys.exit()
+    try:
+        config = ConfigParser()
+        config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
+    except MissingSectionHeaderError:
+        print('\033[91mERROR:\033[0m DEFAULT section could not be found in settings.ini file.')
+        sys.exit()
+    response = {}
+    for key in ['tmdb_api_key', 'region', 'lang', 'resolution', 'max_resolution', 'min_resolution', 'subfolder', 'custom_formatting']:
+        response[key]= config.get('DEFAULT', key)
+    return response
 
 # Format
 def format():
@@ -314,7 +315,7 @@ def main():
 
             # Search YouTube for trailer
             if not downloaded:
-                search = searchTMDB(arguments['title'], settings['api_key'])
+                search = searchTMDB(arguments['title'], settings['tmdb_api_key'])
 
                 # Iterate over search results
                 for result in search['results']:
@@ -323,7 +324,7 @@ def main():
                     if arguments['year'].lower() in result['release_date'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
                         # Find trailers for movie
-                        videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['api_key'])
+                        videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['tmdb_api_key'])
 
                         for item in videos['results']:
                             if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
