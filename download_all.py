@@ -36,7 +36,7 @@ def getSettings():
         print('\033[91mERROR:\033[0m Could not find the settings.ini file. Create one from the settings.ini.example file to get started.')
         sys.exit()
     try:
-        config = ConfigParser()
+        config = RawConfigParser()
         config.read(os.path.split(os.path.abspath(__file__))[0]+'/settings.ini')
     except MissingSectionHeaderError:
         print('\033[91mERROR:\033[0m DEFAULT section could not be found in settings.ini file.')
