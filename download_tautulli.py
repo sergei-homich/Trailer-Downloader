@@ -23,7 +23,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader Tautulli Integration'
-    version = '1.10'
+    version = '1.11'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
     parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
     parser.add_argument('-f', '--file', dest='file', help='full path of movie file', metavar='FILE')

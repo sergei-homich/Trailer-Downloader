@@ -23,7 +23,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader Radarr Integration'
-    version = '1.10'
+    version = '1.11'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
     parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
     args = parser.parse_args()
