@@ -333,13 +333,17 @@ def main():
 
                         break
 
-        else:
+            if downloaded:
+                print('\033[92mSUCCESS:\033[0m Trailer downloaded.')
 
-            print('\033[91mERROR:\033[0m the trailer already exists in the selected directory')
+            else:
+                print('\033[91mERROR:\033[0m No trailer found.')
+
+        else:
+            print('\033[93mWARNING:\033[0m Already downloaded.')
 
     else:
-
-        print('\033[91mERROR:\033[0m you must pass a directory, title, and year to the script')
+        print('\033[91mERROR:\033[0m You must pass a directory, title, and year to the script.')
 
 # Run
 if __name__ == '__main__':

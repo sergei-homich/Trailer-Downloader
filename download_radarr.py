@@ -61,7 +61,6 @@ def main():
         downloadItem()
 
     else:
-
         print('\033[91mERROR:\033[0m you must pass the radarr movie path environment variable to the script. Are you sure Radarr fired this?')
 
 # Run

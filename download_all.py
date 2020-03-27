@@ -80,7 +80,7 @@ def main():
                     directory = arguments['directory']+'/'+item
                 except:
                     print(item)
-                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping...')
+                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
 
                 if title is not None and year is not None and directory is not None:
                     # If subfolder setting is set, add it to the destination directory

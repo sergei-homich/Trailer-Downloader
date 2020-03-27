@@ -62,7 +62,6 @@ def main():
         downloadItem()
 
     else:
-
         print('\033[91mERROR:\033[0m you must pass a file to the script. Are you sure Tautulli fired this?')
 
 # Run
