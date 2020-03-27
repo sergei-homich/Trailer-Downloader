@@ -46,7 +46,7 @@ python3 download_all.py --directory "/path/to/movies"
 This script can also be fired by Radarr or Tautulli to automatically download a trailer each time a new movie is added to your collection.
 
 #### Radarr
-To set this up, open Radarr and got to Setting > Connect. Create a new notification and set the type to "Custom Script". Choose a name for your script and check the boxes for "On Import", "On Upgrade", and "On Rename". Set the path to point to the **download_radarr.py** script and be sure to save your changes.
+To set this up, open Radarr and got to Settings > Connect. Create a new notification and set the type to "Custom Script". Choose a name for your script and check the boxes for "On Import", "On Upgrade", and "On Rename". Set the path to point to the **download_radarr.py** script and be sure to save your changes.
 
 #### Tautulli
 To set this up, open Tautulli and go to Settings > Notification Agents and add a new notification agent. The type should be "script" and you'll want to add the path to the folder the scripts are located in and select **download_tautulli.py** as your script in the configuration tab. Also add a name for the description. Next, go to the triggers tab and check the box for "Recently Added" and then go to the conditions tab and add a condition to only fire when "media type is movie". For the arguments tab, go to the "Recently Added" section and add the snippet below. Be sure to save it and you're all set.

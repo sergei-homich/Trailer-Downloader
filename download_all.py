@@ -71,6 +71,9 @@ def main():
             if os.path.isdir(arguments['directory']+'/'+item):
 
                 # Get variables for the download script
+                title = None
+                year = None
+                directory = None
                 try:
                     title = item[0:item.rfind('(')].strip()
                     year = item[item.rindex('(')+1:].split(')')[0].strip()
@@ -79,29 +82,30 @@ def main():
                     print(item)
                     print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping...')
 
-                # If subfolder setting is set, add it to the destination directory
-                if settings['subfolder'].strip():
-                    destination = directory+'/'+settings['subfolder']
-                else:
-                    destination = directory
+                if title is not None and year is not None and directory is not None:
+                    # If subfolder setting is set, add it to the destination directory
+                    if settings['subfolder'].strip():
+                        destination = directory+'/'+settings['subfolder']
+                    else:
+                        destination = directory
 
-                # Use custom formatting for filenames or use default if none is set
-                if settings['custom_formatting'].strip():
-                    filename = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
-                else:
-                    filename = title+' ('+year+')-trailer.mp4'
+                    # Use custom formatting for filenames or use default if none is set
+                    if settings['custom_formatting'].strip():
+                        filename = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
+                    else:
+                        filename = title+' ('+year+')-trailer.mp4'
 
-                # Make sure the trailer has not already been downloaded
-                if not os.path.exists(destination+'/'+filename):
+                    # Make sure the trailer has not already been downloaded
+                    if not os.path.exists(destination+'/'+filename):
 
-                    # Print current item
-                    print(item)
+                        # Print current item
+                        print(item)
 
-                    # Set up arguments for other script
-                    sys.argv = [os.path.split(os.path.abspath(__file__))[0]+'/download.py', '--title', title, '--year', year, '--directory', directory]
+                        # Set up arguments for other script
+                        sys.argv = [os.path.split(os.path.abspath(__file__))[0]+'/download.py', '--title', title, '--year', year, '--directory', directory]
 
-                    # Run other script
-                    downloadItem()
+                        # Run other script
+                        downloadItem()
     else:
 
         print('\033[91mERROR:\033[0m you must pass a directory to the script')

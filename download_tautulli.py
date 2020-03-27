@@ -53,6 +53,7 @@ def main():
         except:
             print(arguments['file'])
             print('\033[93mWARNING:\033[0m Failed to extract title and year from file. Skipping...')
+            sys.exit()
 
         # Set up arguments for other script
         sys.argv = [os.path.split(os.path.abspath(__file__))[0]+'/download.py', '--title', title, '--year', year, '--directory', directory]
