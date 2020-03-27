@@ -52,7 +52,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader'
-    version = '1.10'
+    version = '1.11'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
     parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
     parser.add_argument('-d', '--directory', dest='directory', help='full path of directory to copy downloaded trailer', metavar='DIRECTORY')
@@ -333,13 +333,17 @@ def main():
 
                         break
 
-        else:
+            if downloaded:
+                print('\033[92mSUCCESS:\033[0m Trailer downloaded.')
 
-            print('\033[91mERROR:\033[0m the trailer already exists in the selected directory')
+            else:
+                print('\033[91mERROR:\033[0m No trailer found.')
+
+        else:
+            print('\033[93mWARNING:\033[0m Already downloaded.')
 
     else:
-
-        print('\033[91mERROR:\033[0m you must pass a directory, title, and year to the script')
+        print('\033[91mERROR:\033[0m You must pass a directory, title, and year to the script.')
 
 # Run
 if __name__ == '__main__':

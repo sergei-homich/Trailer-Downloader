@@ -23,7 +23,7 @@ except:
 # Arguments
 def getArguments():
     name = 'Trailer-Downloader Library Integration'
-    version = '1.10'
+    version = '1.11'
     parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB for all folders in a directory'.format(name))
     parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
     parser.add_argument('-d', '--directory', dest='directory', help='directory used to find movie titles and years', metavar='DIRECTORY')
@@ -80,7 +80,7 @@ def main():
                     directory = arguments['directory']+'/'+item
                 except:
                     print(item)
-                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping...')
+                    print('\033[93mWARNING:\033[0m Failed to extract title and year from folder name. Skipping.')
 
                 if title is not None and year is not None and directory is not None:
                     # If subfolder setting is set, add it to the destination directory
