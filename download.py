@@ -297,14 +297,15 @@ def main():
             for result in search['results']:
 
                 # Filter by year and title
-                if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
+                if 'releasedate' in result and 'title' in result:
+                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
 
-                    file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
+                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
-                    # Update downloaded status
-                    if file:
-                        downloaded = True
-                        break
+                        # Update downloaded status
+                        if file:
+                            downloaded = True
+                            break
 
             # Search YouTube for trailer
             if not downloaded:
@@ -314,22 +315,23 @@ def main():
                 for result in search['results']:
 
                     # Filter by year and title
-                    if arguments['year'].lower() in result['release_date'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
+                    if 'release_date' in result and 'title' in result:
+                        if arguments['year'].lower() in result['release_date'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
 
-                        # Find trailers for movie
-                        videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['tmdb_api_key'])
+                            # Find trailers for movie
+                            videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['tmdb_api_key'])
 
-                        for item in videos['results']:
-                            if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
-                                video = 'https://www.youtube.com/watch?v='+item['key']
+                            for item in videos['results']:
+                                if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
+                                    video = 'https://www.youtube.com/watch?v='+item['key']
 
-                                # Download trailer from YouTube
-                                file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
+                                    # Download trailer from YouTube
+                                    file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
 
-                                # Update downloaded status
-                                if file:
-                                    downloaded = True
-                                    break
+                                    # Update downloaded status
+                                    if file:
+                                        downloaded = True
+                                        break
 
                         break
 
