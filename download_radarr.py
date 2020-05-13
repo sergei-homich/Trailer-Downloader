@@ -35,12 +35,16 @@ def getArguments():
 def main():
     # Arguments
     arguments = getArguments()
+    if '/' in arguments['file']:
+        arguments['file'].rstrip("\\/")+='/'
+    else:
+        arguments['file'].rstrip("\\/")+="\\"
 
     # Make sure a file path was passed from radarr
     if arguments['file'] is not None:
 
         # Make sure file path exists
-        if not os.path.isfile(arguments['file']):
+        if not os.path.isdir(arguments['file']):
             print('\033[91mERROR:\033[0m The provided file path does not exist. Check your arguments.')
             sys.exit()
 
