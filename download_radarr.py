@@ -35,13 +35,15 @@ def getArguments():
 def main():
     # Arguments
     arguments = getArguments()
-    if '/' in arguments['file']:
-        arguments['file'].rstrip("\\/")+='/'
-    else:
-        arguments['file'].rstrip("\\/")+="\\"
-
+    
     # Make sure a file path was passed from radarr
     if arguments['file'] is not None:
+        # In case some Radarr versions end this variable with a slash, remove it
+        arguments['file']=arguments['file'].rstrip("\\/")
+        if '/' in arguments['file']:
+            arguments['file']+='/'
+        else:
+            arguments['file']+="\\"
 
         # Make sure file path exists
         if not os.path.isdir(arguments['file']):
