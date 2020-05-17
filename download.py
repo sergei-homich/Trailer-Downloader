@@ -332,7 +332,7 @@ def main():
                                     if file:
                                         downloaded = True
                                         break
-
+                    if downloaded:
                         break
 
             if downloaded:
