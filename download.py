@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+# Disable bytecode
+import sys
+sys.dont_write_bytecode = True
+
+# Modules
+from __init__ import NAME, VERSION, DESCRIPTION
 from argparse import ArgumentParser
 from configparser import *
 from urllib.request import *
@@ -9,17 +15,8 @@ import json
 import os
 import shutil
 import socket
-import sys
 import time
 import unicodedata
-
-# Disable bytecode
-sys.dont_write_bytecode = True
-
-# Make sure python 3 is being used
-if sys.version_info[0] < 3:
-    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
-    sys.exit()
 
 # requests
 try:
@@ -51,10 +48,8 @@ except:
 
 # Arguments
 def getArguments():
-    name = 'Trailer-Downloader'
-    version = '1.13'
-    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
-    parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
+    parser = ArgumentParser(description=NAME+': '+DESCRIPTION)
+    parser.add_argument('-v', '--version', action='version', version=NAME+' '+VERSION, help='show the version number and exit')
     parser.add_argument('-d', '--directory', dest='directory', help='full path of directory to copy downloaded trailer', metavar='DIRECTORY')
     parser.add_argument('-t', '--title', dest='title', help='title of movie', metavar='TITLE')
     parser.add_argument('-y', '--year', dest='year', help='release year of movie', metavar='YEAR')
@@ -289,25 +284,27 @@ def main():
                 if filename[:-4] in name:
                     downloaded = True
 
-        # Search Apple for trailer
+        # Search
         if not downloaded:
-            search = searchApple(arguments['title'])
+            # Search Apple for trailer (if english requested)
+            if settings['lang'].lower() == "en":
+                search = searchApple(arguments['title'])
 
-            # Iterate over search results
-            for result in search['results']:
+                # Iterate over search results
+                for result in search['results']:
 
-                # Filter by year and title
-                if 'releasedate' in result and 'title' in result:
-                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
+                    # Filter by year and title
+                    if 'releasedate' in result and 'title' in result:
+                        if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
 
-                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
+                            file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
 
-                        # Update downloaded status
-                        if file:
-                            downloaded = True
-                            break
+                            # Update downloaded status
+                            if file:
+                                downloaded = True
+                                break
 
-            # Search YouTube for trailer
+            # Search TMDB/YouTube for trailer
             if not downloaded:
                 search = searchTMDB(arguments['title'], settings['tmdb_api_key'])
 

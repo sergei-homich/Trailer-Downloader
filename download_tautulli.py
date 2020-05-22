@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
 
+# Disable bytecode
+import sys
+sys.dont_write_bytecode = True
+
+# Modules
+from __init__ import NAME, VERSION, DESCRIPTION
 from argparse import ArgumentParser
 from configparser import *
 import os
-import sys
-
-# Disable bytecode
-sys.dont_write_bytecode = True
-
-# Make sure python 3 is being used
-if sys.version_info[0] < 3:
-    print('\033[91mERROR:\033[0m you must be running python 3.0 or higher.')
-    sys.exit()
 
 # download.py
 try:
@@ -22,10 +19,9 @@ except:
 
 # Arguments
 def getArguments():
-    name = 'Trailer-Downloader Tautulli Integration'
-    version = '1.13'
-    parser = ArgumentParser(description='{}: download a movie trailer from Apple or YouTube with help from TMDB'.format(name))
-    parser.add_argument('-v', '--version', action='version', version='{} {}'.format(name, version), help='show the version number and exit')
+    name = NAME+' Tautulli Integration'
+    parser = ArgumentParser(description=name+': '+DESCRIPTION)
+    parser.add_argument('-v', '--version', action='version', version=name+' '+VERSION, help='show the version number and exit')
     parser.add_argument('-f', '--file', dest='file', help='full path of movie file', metavar='FILE')
     args = parser.parse_args()
     return {
