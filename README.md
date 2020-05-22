@@ -59,7 +59,7 @@ If you're running Radarr or Tautulli inside a Docker container and you would lik
 
 This will attach the scripts to the /scripts folder in the container (-v /path/to/scripts:/scripts).
 ```
-docker run --privileged --name tautulli --restart=always -p 8181:8181 \
+docker run --name tautulli --restart=always -p 8181:8181 \
   -v /path/to/config:/config \
   -v /path/to/logs:/logs \
   -v /path/to/scripts:/scripts \
@@ -68,7 +68,7 @@ docker run --privileged --name tautulli --restart=always -p 8181:8181 \
 
 This will install the requirements inside the container.
 ```
-docker exec -it tautulli /bin/bash -c "apk add --no-cache python3 && python3 -m pip install -r /scripts/requirements.txt"
+docker exec -it tautulli /bin/bash -c "apk add --no-cache python3 && /usr/bin/python3 -m pip install -r /scripts/requirements.txt"
 ```
 
 #### Structure
