@@ -4,13 +4,15 @@ A simple set of python scripts for downloading a movie trailer from Apple or fro
 ## Requirements
 -[Python 3.0+](https://www.python.org/)
 
+-[requests](https://github.com/psf/requests)
+
 -[tmdbsimple](https://github.com/celiao/tmdbsimple/blob/master/README.rst) + TMDB API Key
 
 -[youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md#installation)
 
--[unidecode](https://github.com/avian2/unidecode)
-
 -[ffmpeg](https://github.com/FFmpeg/FFmpeg)
+
+-[unidecode](https://github.com/avian2/unidecode)
 
 ## Installation
 ```
