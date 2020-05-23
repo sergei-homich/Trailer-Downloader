@@ -11,5 +11,5 @@ if sys.version_info[0] < 3:
 
 # Defaults
 NAME = 'Trailer-Downloader'
-VERSION = '1.14'
+VERSION = '1.15'
 DESCRIPTION = 'download a movie trailer from Apple or YouTube with help from TMDB'
