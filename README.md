@@ -2,6 +2,8 @@
 A simple set of python scripts for downloading a movie trailer from Apple or from YouTube with help from TMDB. For quality purposes, the scripts will always attempt to download a trailer from Apple before falling back to TMDB and YouTube. You can also download missing trailers for an entire library at once or integrate the script with Radarr or Tautulli to download trailers automatically. This project is useful if you are running a media server like Plex and you would like to have local trailers for each of your movies.
 
 ## Requirements
+-[ffmpeg](https://github.com/FFmpeg/FFmpeg)
+
 -[Python 3.0+](https://www.python.org/)
 
 -[requests](https://github.com/psf/requests)
@@ -10,11 +12,12 @@ A simple set of python scripts for downloading a movie trailer from Apple or fro
 
 -[youtube-dl](https://github.com/rg3/youtube-dl/blob/master/README.md#installation)
 
--[ffmpeg](https://github.com/FFmpeg/FFmpeg)
-
 -[unidecode](https://github.com/avian2/unidecode)
 
 ## Installation
+1. Install [ffmpeg](https://github.com/FFmpeg/FFmpeg)
+
+2. Install python requirements
 ```
 sudo python3 -m pip install -r requirements.txt
 ```
