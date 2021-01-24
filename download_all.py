@@ -92,9 +92,6 @@ def main():
                         filename = title+' ('+year+')-trailer.mp4'
 
                     # Make sure the trailer has not already been downloaded
-                    if os.path.exists(destination+'/'+filename):
-                        os.remove(destination+'/'+filename)
-
                     if not os.path.exists(destination+'/'+filename):
 
                         # Print current item
