@@ -286,9 +286,7 @@ def main():
         if os.path.exists(arguments['directory']):
             for name in os.listdir(arguments['directory']):
                 if filename[:-4] in name:
-                    print('Remove ', name)
-                    os.remove(name)
-                    # downloaded = True
+                    downloaded = True
 
         # Search
         if not downloaded:
