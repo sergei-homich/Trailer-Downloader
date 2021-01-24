@@ -189,13 +189,13 @@ def searchApple(query):
     return loadJson(search_url)
 
 # Search TMDB
-def searchTMDB(query, api_key):
+def searchTMDB(query, api_key, lang):
     query = removeSpecialChars(query)
     tmdb.API_KEY = api_key
     while True:
         try:
             search = tmdb.Search()
-            return search.movie(query=query)
+            return search.movie(query=query, language=lang)
         except exceptions.HTTPError as e:
             exceptionsTMDB(e)
 
@@ -233,7 +233,7 @@ def youtubeDownload(video, min_resolution, max_resolution, directory, filename):
         'default_search': 'ytsearch1:',
         'restrict_filenames': 'TRUE',
         'prefer_ffmpeg': 'TRUE',
-        'quiet': 'TRUE',
+        # 'quiet': 'TRUE',
         'no_warnings': 'TRUE',
         'ignore_errors': 'TRUE',
         'no_playlist': 'TRUE',
@@ -306,14 +306,15 @@ def main():
 
             # Search TMDB/YouTube for trailer
             if not downloaded:
-                search = searchTMDB(arguments['title'], settings['tmdb_api_key'])
+                search = searchTMDB(arguments['title'], settings['tmdb_api_key'], settings['lang'])
 
                 # Iterate over search results
                 for result in search['results']:
 
                     # Filter by year and title
                     if 'release_date' in result and 'title' in result:
-                        if arguments['year'].lower() in result['release_date'].lower() and matchTitle(arguments['title']) == matchTitle(result['title']):
+                        if arguments['year'].lower() in result['release_date'].lower() and \
+                                (matchTitle(arguments['title']) == matchTitle(result['title']) or matchTitle(arguments['title']) == matchTitle(result['original_title'])):
 
                             # Find trailers for movie
                             videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['tmdb_api_key'])
