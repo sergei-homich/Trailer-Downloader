@@ -98,7 +98,7 @@ def has_cyrillic(text):
 
 # Match titles
 def matchTitle(title):
-    return unicodedata.normalize('NFKD', removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace(''', '').replace(''', '').replace('<', '').replace('>', '').replace('|', '').replace('.', '').replace('+', '').replace(' ', '').lower()).encode('ASCII', 'ignore')
+    return unicodedata.normalize('NFKD', removeSpecialChars(title).replace('/', '').replace('\\', '').replace('-', '').replace(':', '').replace('*', '').replace('?', '').replace(''', '').replace(''', '').replace('<', '').replace('>', '').replace('|', '').replace('.', '').replace('+', '').replace(' ', '').lower())
 
 # Load json from url
 def loadJson(url):
@@ -286,7 +286,8 @@ def main():
         if os.path.exists(arguments['directory']):
             for name in os.listdir(arguments['directory']):
                 if filename[:-4] in name:
-                    downloaded = True
+                    os.remove(name)
+                    # downloaded = True
 
         # Search
         if not downloaded:
@@ -319,14 +320,16 @@ def main():
                     # Filter by year and title
                     if 'release_date' in result and 'title' in result:
                         if arguments['year'].lower() in result['release_date'].lower() and \
-                                (matchTitle(arguments['title']) == matchTitle(result['title']) or matchTitle(arguments['title']) == matchTitle(result['original_title'])):
-
+                                (matchTitle(arguments['title']) == matchTitle(result['title'])
+                                 or matchTitle(arguments['title']) == matchTitle(result['original_title'])):
                             # Find trailers for movie
                             videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['tmdb_api_key'])
-
+                            if not len(videos['results']):
+                                print('The movie found but without trailer.')
                             for item in videos['results']:
                                 if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
                                     video = 'https://www.youtube.com/watch?v='+item['key']
+                                    print(video)
 
                                     # Download trailer from YouTube
                                     file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
