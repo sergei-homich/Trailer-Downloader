@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Disable bytecode
+import re
 import sys
 sys.dont_write_bytecode = True
 
@@ -91,6 +92,9 @@ def removeAccents(query):
 # Unescape characters
 def unescape(query):
     return html.unescape(query)
+
+def has_cyrillic(text):
+    return bool(re.search('[а-яА-Я]', text))
 
 # Match titles
 def matchTitle(title):
@@ -189,13 +193,13 @@ def searchApple(query):
     return loadJson(search_url)
 
 # Search TMDB
-def searchTMDB(query, api_key, lang):
+def searchTMDB(query, api_key, lang, year):
     query = removeSpecialChars(query)
     tmdb.API_KEY = api_key
     while True:
         try:
             search = tmdb.Search()
-            return search.movie(query=query, language=lang)
+            return search.movie(query=query, language=lang, year=year)
         except exceptions.HTTPError as e:
             exceptionsTMDB(e)
 
@@ -306,7 +310,8 @@ def main():
 
             # Search TMDB/YouTube for trailer
             if not downloaded:
-                search = searchTMDB(arguments['title'], settings['tmdb_api_key'], settings['lang'])
+                lang = 'ru' if has_cyrillic(arguments['title']) else 'en'
+                search = searchTMDB(arguments['title'], settings['tmdb_api_key'], lang, arguments['year'])
 
                 # Iterate over search results
                 for result in search['results']:

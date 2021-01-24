@@ -2,3 +2,6 @@
 /__pycache__
 /downloads
 settings.ini
+.venv*
+.idea
+sandbox*
