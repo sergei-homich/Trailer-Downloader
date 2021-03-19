@@ -65,7 +65,8 @@ def main():
 
             # Make sure the item is a directory
             if os.path.isdir(arguments['directory']+'/'+item):
-
+                print('-' * 80)
+                print(item)
                 # Get variables for the download script
                 title = None
                 year = None
@@ -93,16 +94,13 @@ def main():
 
                     # Make sure the trailer has not already been downloaded
                     if not os.path.exists(destination+'/' + filename_ru):
-                        # Print current item
-                        print(item)
-
                         # Set up arguments for other script
                         sys.argv = [os.path.split(os.path.abspath(__file__))[0]+'/download.py', '--title', title, '--year', year, '--directory', directory]
 
                         # Run other script
                         downloadItem()
                     else:
-                        print('Ru trailer already downloaded!')
+                        print('RU trailer already downloaded!')
     else:
 
         print('\033[91mERROR:\033[0m you must pass a directory to the script')

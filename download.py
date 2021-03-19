@@ -313,7 +313,7 @@ def main():
                             # Find trailers for movie
                             videos = videosTMDB(result['id'], settings['lang'], settings['region'], settings['tmdb_api_key'])
                             if not len(videos['results']):
-                                print('The movie found but without trailer.')
+                                print('The movie found but without RU trailer.')
                             for item in videos['results']:
                                 if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
                                     video = 'https://www.youtube.com/watch?v='+item['key']
@@ -374,7 +374,7 @@ def main():
                             # Find trailers for movie
                             videos = videosTMDB(result['id'], 'en', 'US', settings['tmdb_api_key'])
                             if not len(videos['results']):
-                                print('The movie found but without trailer.')
+                                print('The movie found but without EN trailer.')
                             for item in videos['results']:
                                 if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
                                     video = 'https://www.youtube.com/watch?v='+item['key']
