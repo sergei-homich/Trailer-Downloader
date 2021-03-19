@@ -101,6 +101,8 @@ def main():
 
                         # Run other script
                         downloadItem()
+                    else:
+                        print('Ru trailer already downloaded!')
     else:
 
         print('\033[91mERROR:\033[0m you must pass a directory to the script')
