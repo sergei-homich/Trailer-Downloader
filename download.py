@@ -288,12 +288,9 @@ def main():
         if os.path.exists(arguments['directory']):
             for name in os.listdir(arguments['directory']):
                 if filename_ru[:-4] in name:
-                    downloaded = 'ru'
                     return
                 if filename_en[:-4] in name:
                     downloaded = 'en'
-                    return
-
 
         # Search ru trailer
         if downloaded != 'ru':
@@ -326,13 +323,14 @@ def main():
                                     if file:
                                         downloaded = 'ru'
                                         break
-                    if downloaded:
+                    if downloaded == 'ru':
                         if os.path.exists(filename_en):
                             os.remove(filename_en)
                         break
 
-            if downloaded:
+            if downloaded == 'ru':
                 print('\033[92mSUCCESS:\033[0m RU trailer downloaded.')
+                return
             else:
                 print('\033[91mERROR:\033[0m No RU trailer found.')
         else:
