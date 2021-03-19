@@ -87,13 +87,14 @@ def main():
 
                     # Use custom formatting for filenames or use default if none is set
                     if settings['custom_formatting'].strip():
-                        filename = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
+                        filename_ru = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
+                        filename_en = settings['custom_formatting'].replace('%title%', title).replace('%year%', year)+'.mp4'
                     else:
-                        filename = title+' ('+year+')-trailer.mp4'
+                        filename_ru = title+' ('+year+')-ru-trailer.mp4'
+                        filename_en = title+' ('+year+')-en-trailer.mp4'
 
                     # Make sure the trailer has not already been downloaded
-                    if not os.path.exists(destination+'/'+filename):
-
+                    if not os.path.exists(destination+'/' + filename_ru):
                         # Print current item
                         print(item)
 

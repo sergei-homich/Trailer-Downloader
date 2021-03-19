@@ -275,41 +275,30 @@ def main():
 
         # Use custom formatting for filenames or use default if none is set
         if settings['custom_formatting'].strip():
-            filename = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
+            filename_ru = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
+            filename_en = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
         else:
-            filename = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
+            filename_ru = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-ru-trailer.mp4'
+            filename_en = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-en-trailer.mp4'
 
         # Download status
-        downloaded = False
+        downloaded = None
 
         # Make sure trailer file doesn't already exist in the directory
         if os.path.exists(arguments['directory']):
             for name in os.listdir(arguments['directory']):
-                if filename[:-4] in name:
-                    downloaded = True
+                if filename_ru[:-4] in name:
+                    downloaded = 'ru'
+                    return
+                if filename_en[:-4] in name:
+                    downloaded = 'en'
+                    return
 
-        # Search
-        if not downloaded:
-            # Search Apple for trailer (if english requested)
-            if settings['lang'].lower() == "en":
-                search = searchApple(arguments['title'])
 
-                # Iterate over search results
-                for result in search['results']:
-
-                    # Filter by year and title
-                    if 'releasedate' in result and 'title' in result:
-                        if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
-
-                            file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename)
-
-                            # Update downloaded status
-                            if file:
-                                downloaded = True
-                                break
-
+        # Search ru trailer
+        if downloaded != 'ru':
             # Search TMDB/YouTube for trailer
-            if not downloaded:
+            if downloaded != 'ru':
                 lang = 'ru' if has_cyrillic(arguments['title']) else 'en'
                 search = searchTMDB(arguments['title'], settings['tmdb_api_key'], lang, arguments['year'])
 
@@ -331,11 +320,72 @@ def main():
                                     print(video)
 
                                     # Download trailer from YouTube
-                                    file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename)
+                                    file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename_ru)
 
                                     # Update downloaded status
                                     if file:
-                                        downloaded = True
+                                        downloaded = 'ru'
+                                        break
+                    if downloaded:
+                        if os.path.exists(filename_en):
+                            os.remove(filename_en)
+                        break
+
+            if downloaded:
+                print('\033[92mSUCCESS:\033[0m RU trailer downloaded.')
+            else:
+                print('\033[91mERROR:\033[0m No RU trailer found.')
+        else:
+            print('\033[93mWARNING:\033[0m RU trailer already downloaded.')
+
+        # -----------
+        # Search en trailer
+        if not downloaded:
+            # Search Apple for trailer (if english requested)
+            search = searchApple(arguments['title'])
+
+            # Iterate over search results
+            for result in search['results']:
+
+                # Filter by year and title
+                if 'releasedate' in result and 'title' in result:
+                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
+
+                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename_en)
+
+                        # Update downloaded status
+                        if file:
+                            downloaded = 'en'
+                            break
+
+            # Search TMDB/YouTube for trailer
+            if not downloaded:
+                lang = 'ru' if has_cyrillic(arguments['title']) else 'en'
+                search = searchTMDB(arguments['title'], settings['tmdb_api_key'], lang, arguments['year'])
+
+                # Iterate over search results
+                for result in search['results']:
+
+                    # Filter by year and title
+                    if 'release_date' in result and 'title' in result:
+                        if arguments['year'].lower() in result['release_date'].lower() and \
+                                (matchTitle(arguments['title']) == matchTitle(result['title'])
+                                 or matchTitle(arguments['title']) == matchTitle(result['original_title'])):
+                            # Find trailers for movie
+                            videos = videosTMDB(result['id'], 'en', 'US', settings['tmdb_api_key'])
+                            if not len(videos['results']):
+                                print('The movie found but without trailer.')
+                            for item in videos['results']:
+                                if 'Trailer' in item['type'] and int(item['size']) >= int(settings['min_resolution']):
+                                    video = 'https://www.youtube.com/watch?v='+item['key']
+                                    print(video)
+
+                                    # Download trailer from YouTube
+                                    file = youtubeDownload(video, settings['min_resolution'], settings['max_resolution'], arguments['directory'], filename_en)
+
+                                    # Update downloaded status
+                                    if file:
+                                        downloaded = 'en'
                                         break
                     if downloaded:
                         break
@@ -351,6 +401,7 @@ def main():
 
     else:
         print('\033[91mERROR:\033[0m You must pass a directory, title, and year to the script.')
+
 
 # Run
 if __name__ == '__main__':
