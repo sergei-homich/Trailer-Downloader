@@ -339,23 +339,6 @@ def main():
         # -----------
         # Search en trailer
         if not downloaded:
-            # Search Apple for trailer (if english requested)
-            search = searchApple(arguments['title'])
-
-            # Iterate over search results
-            for result in search['results']:
-
-                # Filter by year and title
-                if 'releasedate' in result and 'title' in result:
-                    if arguments['year'].lower() in result['releasedate'].lower() and matchTitle(arguments['title']) == matchTitle(unescape(result['title'])):
-
-                        file = appleDownload('https://trailers.apple.com/'+result['location'], settings['resolution'], arguments['directory'], filename_en)
-
-                        # Update downloaded status
-                        if file:
-                            downloaded = 'en'
-                            break
-
             # Search TMDB/YouTube for trailer
             if not downloaded:
                 lang = 'ru' if has_cyrillic(arguments['title']) else 'en'
