@@ -278,7 +278,7 @@ def main():
             filename_ru = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
             filename_en = settings['custom_formatting'].replace('%title%', arguments['title'].replace(':', '-')).replace('%year%', arguments['year'])+'.mp4'
         else:
-            filename_ru = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-ru-trailer.mp4'
+            filename_ru = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-trailer.mp4'
             filename_en = arguments['title'].replace(':', '-')+' ('+arguments['year']+')-en-trailer.mp4'
 
         # Download status
